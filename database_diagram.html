@@ -1,0 +1,1533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSMS Database ER Diagram & Relational Schema</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Mermaid JS via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    
+    <style>
+        :root {
+            --bg-primary: #090d16;
+            --bg-secondary: #111827;
+            --sidebar-bg: rgba(17, 24, 39, 0.85);
+            --card-bg: rgba(31, 41, 55, 0.5);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --accent-cyan: #06b6d4;
+            --accent-teal: #14b8a6;
+            --accent-amber: #f59e0b;
+            --accent-blue: #3b82f6;
+            --accent-pink: #ec4899;
+            --glow-color: rgba(20, 184, 166, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-primary);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(20, 184, 166, 0.08) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.08) 0, transparent 50%);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            width: 380px;
+            height: 100%;
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(16px);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            z-index: 10;
+            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo-icon {
+            font-size: 28px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-text h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            background: linear-gradient(to right, #ffffff, var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-text p {
+            font-size: 11px;
+            color: var(--accent-teal);
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* Search input styling */
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 12px 12px 38px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-teal);
+            box-shadow: 0 0 10px var(--glow-color);
+        }
+
+        /* Controls block */
+        .control-section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .toggle-btn-group {
+            display: flex;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 12px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 8px 12px;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .toggle-btn.active {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-teal));
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(20, 184, 166, 0.2);
+        }
+
+        .nav-controls {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+        }
+
+        .btn-icon {
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 36px;
+        }
+
+        .btn-icon:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        /* Inspector card */
+        .inspector-panel {
+            flex-grow: 1;
+            background: rgba(0, 0, 0, 0.15);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .inspector-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 13px;
+            gap: 10px;
+        }
+
+        .inspector-empty i {
+            font-size: 32px;
+            opacity: 0.3;
+        }
+
+        .inspector-content {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .inspector-header {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+
+        .inspector-table-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .inspector-table-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+            line-height: 1.4;
+        }
+
+        .inspector-section-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin: 12px 0 8px 0;
+        }
+
+        .column-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .column-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 12px;
+        }
+
+        .column-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: monospace;
+            margin-bottom: 4px;
+        }
+
+        .col-name {
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .col-type {
+            color: var(--accent-teal);
+        }
+
+        .col-key {
+            font-size: 9px;
+            font-weight: bold;
+            padding: 1px 4px;
+            border-radius: 4px;
+        }
+
+        .key-pk {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--accent-amber);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .key-fk {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--accent-blue);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .col-desc {
+            color: var(--text-secondary);
+            font-size: 11px;
+            line-height: 1.3;
+        }
+
+        /* SQL Schema Code block */
+        .sql-schema-block {
+            display: none;
+            position: relative;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 11px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            max-height: 120px;
+            color: #10b981;
+            margin-top: 6px;
+        }
+
+        .btn-copy-sql {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px 6px;
+            font-size: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-copy-sql:hover {
+            color: #fff;
+            background: var(--accent-teal);
+            border-color: var(--accent-teal);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 12px;
+        }
+
+        .footer-links a {
+            color: var(--accent-teal);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-cyan);
+            text-decoration: underline;
+        }
+
+        /* Main Viewport styling */
+        .main-content {
+            flex-grow: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-color: #0d1220;
+        }
+
+        /* Diagram Viewport styling */
+        .diagram-wrapper {
+            position: relative;
+            flex-grow: 1;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .diagram-viewport {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .diagram-viewport.active {
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 2;
+        }
+
+        .diagram-viewport.inactive {
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .diagram-inner {
+            transform-origin: center center;
+            user-select: none;
+            width: 95%;
+            height: 95%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .diagram-inner svg {
+            width: 100% !important;
+            height: 100% !important;
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        /* Notification Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: rgba(16, 185, 129, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            transform: translateY(150%);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 100;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+        }
+
+        /* Highlight classes for SVG */
+        .highlighted-node rect,
+        .highlighted-node polygon,
+        .highlighted-node circle,
+        .highlighted-node path,
+        .highlighted-node .label-container {
+            stroke: var(--accent-cyan) !important;
+            stroke-width: 3px !important;
+            filter: drop-shadow(0 0 12px var(--accent-cyan)) !important;
+            fill: rgba(6, 182, 212, 0.25) !important;
+        }
+
+        /* SVG node mouse styling */
+        g.node {
+            cursor: pointer;
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+
+        g.node:hover rect,
+        g.node:hover polygon,
+        g.node:hover circle,
+        g.node:hover path {
+            stroke: var(--accent-teal) !important;
+            stroke-width: 2.5px !important;
+            filter: drop-shadow(0 0 8px var(--accent-teal));
+        }
+
+        /* Legends */
+        .legend-card {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 5;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+        }
+
+        .legend-chen {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .legend-relational {
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <!-- Logo Block -->
+        <div class="logo-container">
+            <i class="fa-solid fa-database logo-icon"></i>
+            <div class="logo-text">
+                <h1>MSMS DATABASE</h1>
+                <p>Interactive Schema & ERD</p>
+            </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="search-input" class="search-input" placeholder="Search tables, fields or attributes...">
+        </div>
+
+        <!-- Controls Section -->
+        <div class="control-section">
+            <div class="section-title">
+                <i class="fa-solid fa-sliders"></i> Diagram View Mode
+            </div>
+            <div class="toggle-btn-group">
+                <button class="toggle-btn active" id="btn-view-chen">
+                    <i class="fa-solid fa-shapes"></i> Chen ERD
+                </button>
+                <button class="toggle-btn" id="btn-view-relational">
+                    <i class="fa-solid fa-table"></i> Relational (Crow's Foot)
+                </button>
+            </div>
+            
+            <div class="section-title" style="margin-top: 15px;">
+                <i class="fa-solid fa-magnifying-glass-plus"></i> Viewport controls
+            </div>
+            <div class="nav-controls">
+                <button class="btn-icon" id="btn-zoom-in" title="Zoom In"><i class="fa-solid fa-plus"></i></button>
+                <button class="btn-icon" id="btn-zoom-out" title="Zoom Out"><i class="fa-solid fa-minus"></i></button>
+                <button class="btn-icon" id="btn-zoom-reset" title="Reset view"><i class="fa-solid fa-arrow-rotate-right"></i></button>
+                <button class="btn-icon" id="btn-export-svg" title="Export SVG"><i class="fa-solid fa-file-code"></i></button>
+                <button class="btn-icon" id="btn-export-png" title="Export PNG Image"><i class="fa-solid fa-file-image"></i></button>
+            </div>
+        </div>
+
+        <!-- Table/Entity Inspector -->
+        <div class="section-title">
+            <i class="fa-solid fa-circle-info"></i> Object Inspector
+        </div>
+        <div class="inspector-panel">
+            <div class="inspector-empty" id="inspector-empty">
+                <i class="fa-solid fa-hand-pointer animate-pulse"></i>
+                <p>Click on any table or entity inside the diagram to inspect attributes, relationships, and SQL schema.</p>
+            </div>
+            <div class="inspector-content" id="inspector-content">
+                <div class="inspector-header">
+                    <div class="inspector-table-name" id="ins-table-name">Table Name</div>
+                    <div class="inspector-table-desc" id="ins-table-desc">Table description goes here.</div>
+                </div>
+                
+                <div class="inspector-section-label">Columns Schema</div>
+                <ul class="column-list" id="ins-column-list">
+                    <!-- Column templates go here -->
+                </ul>
+                
+                <div class="inspector-section-label" style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>SQL CREATE code</span>
+                    <button class="toggle-sql-btn" id="btn-toggle-sql" style="background:transparent; border:none; color:var(--accent-teal); cursor:pointer; font-size:11px; font-weight:600;"><i class="fa-solid fa-code"></i> Show Code</button>
+                </div>
+                <div class="sql-schema-block" id="ins-sql-code">
+                    <button class="btn-copy-sql" id="btn-copy-sql-code" title="Copy SQL"><i class="fa-regular fa-copy"></i></button>
+                    <code id="ins-sql-text"></code>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Links -->
+        <div class="footer-links">
+            <a href="index.php"><i class="fa-solid fa-house"></i> Public Home</a>
+            <a href="admin/dashboard.php"><i class="fa-solid fa-user-tie"></i> Admin Panel</a>
+        </div>
+    </div>
+
+    <!-- MAIN VIEWPORT CONTAINER -->
+    <div class="main-content">
+        <div class="diagram-wrapper">
+            
+            <!-- Chen ER Diagram Viewport -->
+            <div class="diagram-viewport active" id="chen-viewport">
+                <div class="diagram-inner" id="chen-wrapper">
+                    <pre class="mermaid" id="chen-mermaid">
+flowchart TD
+    %% Styling Configuration
+    classDef entity fill:#1e3a8a,stroke:#3b82f6,stroke-width:2px,color:#fff;
+    classDef relationship fill:#b45309,stroke:#f59e0b,stroke-width:2px,color:#fff;
+    classDef attribute fill:#0f766e,stroke:#14b8a6,stroke-width:1px,color:#fff;
+    classDef key_attribute fill:#115e59,stroke:#0d9488,stroke-dasharray: 4 3,stroke-width:2px,color:#fff;
+
+    %% Entities (Rectangles)
+    Admin[Admin <br/> tbladmin]:::entity
+    Client[Client / Customer <br/> tblcustomers]:::entity
+    Services[Services <br/> tblservices]:::entity
+    Invoice[Invoice <br/> tblinvoice]:::entity
+    Appointment[Appointment <br/> tblappointment]:::entity
+    Page[CMS / Pages <br/> tblpage]:::entity
+    Subscriber[Subscriber <br/> tblsubscriber]:::entity
+    Stylist[Stylist <br/> tblstylists]:::entity
+
+    %% Relationships (Diamonds)
+    Has{Has}:::relationship
+    Add_S{Add}:::relationship
+    Add_C{Add}:::relationship
+    Add_St{Add}:::relationship
+    Create_I{Create}:::relationship
+    View_I{View}:::relationship
+    Book{Book}:::relationship
+    Assigned{Assigned}:::relationship
+    Includes{Includes}:::relationship
+    Specialist{Specializes}:::relationship
+
+    %% Admin Attributes (Ovals/Stadium)
+    admin_id([ID (PK)]):::key_attribute --- Admin
+    admin_name([AdminName]):::attribute --- Admin
+    admin_username([UserName]):::attribute --- Admin
+    admin_mobile([MobileNumber]):::attribute --- Admin
+    admin_email([Email]):::attribute --- Admin
+    admin_pass([Password]):::attribute --- Admin
+    admin_regdate([AdminRegdate]):::attribute --- Admin
+
+    %% Services Attributes
+    srv_id([ID (PK)]):::key_attribute --- Services
+    srv_name([ServiceName]):::attribute --- Services
+    srv_desc([Description]):::attribute --- Services
+    srv_cost([Cost]):::attribute --- Services
+    srv_date([CreationDate]):::attribute --- Services
+
+    %% Client Attributes
+    client_id([ID (PK)]):::key_attribute --- Client
+    client_name([Name]):::attribute --- Client
+    client_email([Email]):::attribute --- Client
+    client_mobile([MobileNumber]):::attribute --- Client
+    client_gender([Gender]):::attribute --- Client
+    client_details([Details]):::attribute --- Client
+    client_username([UserName]):::attribute --- Client
+    client_pass([Password]):::attribute --- Client
+    client_cdate([CreationDate]):::attribute --- Client
+    client_udate([UpdationDate]):::attribute --- Client
+
+    %% Invoice Attributes
+    inv_id([id (PK)]):::key_attribute --- Invoice
+    inv_uid([Userid]):::attribute --- Invoice
+    inv_sid([ServiceId]):::attribute --- Invoice
+    inv_bid([BillingId]):::attribute --- Invoice
+    inv_date([PostingDate]):::attribute --- Invoice
+
+    %% Appointment Attributes
+    apt_id([ID (PK)]):::key_attribute --- Appointment
+    apt_num([AptNumber]):::attribute --- Appointment
+    apt_name([Name]):::attribute --- Appointment
+    apt_email([Email]):::attribute --- Appointment
+    apt_phone([PhoneNumber]):::attribute --- Appointment
+    apt_date([AptDate]):::attribute --- Appointment
+    apt_time([AptTime]):::attribute --- Appointment
+    apt_srv([Services]):::attribute --- Appointment
+    apt_apply([ApplyDate]):::attribute --- Appointment
+    apt_rem([Remark]):::attribute --- Appointment
+    apt_status([Status]):::attribute --- Appointment
+    apt_remdate([RemarkDate]):::attribute --- Appointment
+    apt_styid([StylistId]):::attribute --- Appointment
+    apt_styrem([StylistRemark]):::attribute --- Appointment
+    apt_stystatus([StylistStatus]):::attribute --- Appointment
+
+    %% Page Attributes
+    page_id([ID (PK)]):::key_attribute --- Page
+    page_type([PageType]):::attribute --- Page
+    page_title([PageTitle]):::attribute --- Page
+    page_desc([PageDescription]):::attribute --- Page
+    page_email([Email]):::attribute --- Page
+    page_mobile([MobileNumber]):::attribute --- Page
+    page_time([Timing]):::attribute --- Page
+    page_udate([UpdationDate]):::attribute --- Page
+
+    %% Subscriber Attributes
+    sub_id([ID (PK)]):::key_attribute --- Subscriber
+    sub_email([Email]):::attribute --- Subscriber
+    sub_date([DateofSub]):::attribute --- Subscriber
+
+    %% Stylist Attributes
+    sty_id([ID (PK)]):::key_attribute --- Stylist
+    sty_name([StylistName]):::attribute --- Stylist
+    sty_username([UserName]):::attribute --- Stylist
+    sty_email([Email]):::attribute --- Stylist
+    sty_mobile([MobileNumber]):::attribute --- Stylist
+    sty_specialty([Specialty]):::attribute --- Stylist
+    sty_pass([Password]):::attribute --- Stylist
+    sty_cdate([CreationDate]):::attribute --- Stylist
+
+    %% Relationships connections
+    Admin === Has === Page
+    Admin === Add_S === Services
+    Admin === Add_C === Client
+    Admin === Add_St === Stylist
+    Admin === Create_I === Invoice
+    Client === View_I === Invoice
+    Client === Book === Appointment
+    Stylist === Assigned === Appointment
+    Invoice === Includes === Services
+    Stylist === Specialist === Services
+                    </pre>
+                </div>
+            </div>
+            
+            <!-- Relational Schema Viewport -->
+            <div class="diagram-viewport inactive" id="relational-viewport">
+                <div class="diagram-inner" id="relational-wrapper">
+                    <pre class="mermaid" id="relational-mermaid">
+erDiagram
+    tbladmin {
+        int ID PK
+        char AdminName
+        char UserName
+        bigint MobileNumber
+        varchar Email
+        varchar Password
+        timestamp AdminRegdate
+    }
+    tblcustomers {
+        int ID PK
+        varchar Name
+        varchar Email
+        bigint MobileNumber
+        enum Gender
+        mediumtext Details
+        varchar UserName
+        varchar Password
+        timestamp CreationDate
+        timestamp UpdationDate
+    }
+    tblstylists {
+        int ID PK
+        varchar StylistName
+        varchar UserName
+        varchar Email
+        bigint MobileNumber
+        varchar Specialty
+        varchar Password
+        timestamp CreationDate
+    }
+    tblservices {
+        int ID PK
+        varchar ServiceName
+        mediumtext Description
+        int Cost
+        timestamp CreationDate
+    }
+    tblstylist_services {
+        int ID PK
+        int StylistId FK
+        int ServiceId FK
+    }
+    tblappointment {
+        int ID PK
+        varchar AptNumber
+        varchar Name
+        varchar Email
+        bigint PhoneNumber
+        varchar AptDate
+        varchar AptTime
+        varchar Services
+        timestamp ApplyDate
+        varchar Remark
+        varchar Status
+        int StylistId FK
+        varchar StylistRemark
+        varchar StylistStatus
+        timestamp RemarkDate
+    }
+    tblinvoice {
+        int id PK
+        int Userid FK
+        int ServiceId FK
+        int BillingId
+        timestamp PostingDate
+    }
+    tblpage {
+        int ID PK
+        varchar PageType
+        mediumtext PageTitle
+        mediumtext PageDescription
+        varchar Email
+        bigint MobileNumber
+        varchar Timing
+        date UpdationDate
+    }
+    tblsubscriber {
+        int ID PK
+        varchar Email
+        timestamp DateofSub
+    }
+
+    tblcustomers ||--o{ tblinvoice : "receives billing"
+    tblservices ||--o{ tblinvoice : "billed inside"
+    tblstylists ||--o{ tblstylist_services : "performs"
+    tblservices ||--o{ tblstylist_services : "provided by"
+    tblstylists ||--o{ tblappointment : "attends booking"
+    tblcustomers ||--o{ tblappointment : "makes booking"
+                    </pre>
+                </div>
+            </div>
+
+            <!-- Dynamic Legends overlay -->
+            <div class="legend-card" id="legend-box">
+                <!-- Chen Legends -->
+                <div class="legend-chen" id="legend-chen-box">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #1e3a8a; border: 1px solid #3b82f6;"></div>
+                        <span>Entity Set (Database Tables)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #0f766e; border: 1px solid #14b8a6;"></div>
+                        <span>Attribute (Columns)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #115e59; border: 2px dashed #0d9488;"></div>
+                        <span>Primary Key Attribute</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #b45309; border: 1px solid #f59e0b;"></div>
+                        <span>Relationship (Constraints)</span>
+                    </div>
+                </div>
+                <!-- Relational Legends -->
+                <div class="legend-relational" id="legend-relational-box">
+                    <div class="legend-item">
+                        <i class="fa-solid fa-key" style="color: #f59e0b; font-size: 11px;"></i>
+                        <span>PK = Primary Key</span>
+                    </div>
+                    <div class="legend-item">
+                        <i class="fa-solid fa-key" style="color: #3b82f6; font-size: 11px;"></i>
+                        <span>FK = Foreign Key</span>
+                    </div>
+                    <div class="legend-item">
+                        <div style="width: 14px; border-top: 2px solid #38bdf8;"></div>
+                        <span>Link relationship (1 to Many)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION TOAST -->
+    <div class="toast" id="copy-toast">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="toast-message">Copied to clipboard successfully!</span>
+    </div>
+
+    <!-- CODE SCRIPT -->
+    <script>
+        // Database metadata dictionary
+        const schemaData = {
+            tbladmin: {
+                name: "tbladmin",
+                title: "Administrator (tbladmin)",
+                description: "Stores admin registration data and login credentials. Controls all global service settings, staff registrations, and bookings.",
+                sql: `CREATE TABLE IF NOT EXISTS \`tbladmin\` (\n  \`ID\` int(10) NOT NULL AUTO_INCREMENT,\n  \`AdminName\` char(50) DEFAULT NULL,\n  \`UserName\` char(50) DEFAULT NULL,\n  \`MobileNumber\` bigint(10) DEFAULT NULL,\n  \`Email\` varchar(200) DEFAULT NULL,\n  \`Password\` varchar(200) DEFAULT NULL,\n  \`AdminRegdate\` timestamp NULL DEFAULT current_timestamp(),\n  PRIMARY KEY (\`ID\`)\n) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=2;`,
+                columns: [
+                    { name: "ID", type: "int(10)", key: "PK", extra: "AUTO_INCREMENT", desc: "Unique identifier for the administrator account." },
+                    { name: "AdminName", type: "char(50)", key: "", extra: "NULL", desc: "Full name of the salon administrator." },
+                    { name: "UserName", type: "char(50)", key: "", extra: "NULL", desc: "Login handle for security entry (Default: admin)." },
+                    { name: "MobileNumber", type: "bigint(10)", key: "", extra: "NULL", desc: "10-digit mobile number." },
+                    { name: "Email", type: "varchar(200)", key: "", extra: "NULL", desc: "Work email address." },
+                    { name: "Password", type: "varchar(200)", key: "", extra: "NULL", desc: "MD5 hashed password for validation." },
+                    { name: "AdminRegdate", type: "timestamp", key: "", extra: "current_timestamp()", desc: "Timestamp when the admin registered." }
+                ]
+            },
+            tblcustomers: {
+                name: "tblcustomers",
+                title: "Client / Customer (tblcustomers)",
+                description: "Contains data of registered salon clients. Used by clients to login, request slots, select stylists, and track their invoices.",
+                sql: `CREATE TABLE \`tblcustomers\` (\n  \`ID\` int(10) NOT NULL AUTO_INCREMENT,\n  \`Name\` varchar(120) DEFAULT NULL,\n  \`Email\` varchar(200) DEFAULT NULL,\n  \`MobileNumber\` bigint(11) DEFAULT NULL,\n  \`Gender\` enum('Female','Male','Transgender') DEFAULT NULL,\n  \`Details\` mediumtext DEFAULT NULL,\n  \`UserName\` varchar(100) DEFAULT NULL,\n  \`Password\` varchar(200) DEFAULT NULL,\n  \`CreationDate\` timestamp NULL DEFAULT current_timestamp(),\n  \`UpdationDate\` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),\n  PRIMARY KEY (\`ID\`)\n) ENGINE=InnoDB DEFAULT CHARSET=latin1;`,
+                columns: [
+                    { name: "ID", type: "int(10)", key: "PK", extra: "AUTO_INCREMENT", desc: "Unique client account identifier." },
+                    { name: "Name", type: "varchar(120)", key: "", extra: "NULL", desc: "Client's full name." },
+                    { name: "Email", type: "varchar(200)", key: "", extra: "NULL", desc: "Customer email address." },
+                    { name: "MobileNumber", type: "bigint(11)", key: "", extra: "NULL", desc: "Contact phone details." },
+                    { name: "Gender", type: "enum", key: "", extra: "NULL", desc: "Customer gender (Female / Male / Transgender)." },
+                    { name: "Details", type: "mediumtext", key: "", extra: "NULL", desc: "History, notes, or specific hair/skin instructions." },
+                    { name: "UserName", type: "varchar(100)", key: "", extra: "NULL", desc: "Sign-in username credentials." },
+                    { name: "Password", type: "varchar(200)", key: "", extra: "NULL", desc: "MD5 hashed password for security authentication." },
+                    { name: "CreationDate", type: "timestamp", key: "", extra: "current_timestamp()", desc: "Registration date." },
+                    { name: "UpdationDate", type: "timestamp", key: "", extra: "NULL", desc: "Timestamp when account was last updated." }
+                ]
+            },
+            tblstylists: {
+                name: "tblstylists",
+                title: "Stylist / Barber (tblstylists)",
+                description: "Stores stylist credentials, contact details, and their general area of specialty. Stylists use this for the approval dashboard.",
+                sql: `CREATE TABLE IF NOT EXISTS \`tblstylists\` (\n  \`ID\` int(10) NOT NULL AUTO_INCREMENT,\n  \`StylistName\` varchar(120) DEFAULT NULL,\n  \`UserName\` varchar(100) DEFAULT NULL,\n  \`Email\` varchar(200) DEFAULT NULL,\n  \`MobileNumber\` bigint(11) DEFAULT NULL,\n  \`Specialty\` varchar(200) DEFAULT NULL,\n  \`Password\` varchar(200) DEFAULT NULL,\n  \`CreationDate\` timestamp NULL DEFAULT current_timestamp(),\n  PRIMARY KEY (\`ID\`)\n) ENGINE=InnoDB DEFAULT CHARSET=latin1;`,
+                columns: [
+                    { name: "ID", type: "int(10)", key: "PK", extra: "AUTO_INCREMENT", desc: "Unique stylist key identifier." },
+                    { name: "StylistName", type: "varchar(120)", key: "", extra: "NULL", desc: "Stylist full name." },
+                    { name: "UserName", type: "varchar(100)", key: "", extra: "NULL", desc: "Stylist login username (Default: stylist)." },
+                    { name: "Email", type: "varchar(200)", key: "", extra: "NULL", desc: "Work email." },
+                    { name: "MobileNumber", type: "bigint(11)", key: "", extra: "NULL", desc: "Work phone contact." },
+                    { name: "Specialty", type: "varchar(200)", key: "", extra: "NULL", desc: "Area of expertise (e.g. Hair Cut & Styling)." },
+                    { name: "Password", type: "varchar(200)", key: "", extra: "NULL", desc: "MD5 hashed stylist login password." },
+                    { name: "CreationDate", type: "timestamp", key: "", extra: "current_timestamp()", desc: "Stylist creation timestamp." }
+                ]
+            },
+            tblservices: {
+                name: "tblservices",
+                title: "Services Offered (tblservices)",
+                description: "Catalog of salon services including hair cuts, beauty facials, spa treatments, and costs.",
+                sql: `CREATE TABLE \`tblservices\` (\n  \`ID\` int(10) NOT NULL AUTO_INCREMENT,\n  \`ServiceName\` varchar(200) DEFAULT NULL,\n  \`Description\` mediumtext DEFAULT NULL,\n  \`Cost\` int(10) DEFAULT NULL,\n  \`CreationDate\` timestamp NULL DEFAULT current_timestamp(),\n  PRIMARY KEY (\`ID\`)\n) ENGINE=InnoDB DEFAULT CHARSET=latin1;`,
+                columns: [
+                    { name: "ID", type: "int(10)", key: "PK", extra: "AUTO_INCREMENT", desc: "Unique catalog service ID." },
+                    { name: "ServiceName", type: "varchar(200)", key: "", extra: "NULL", desc: "Title of the service (e.g., Charcoal Facial)." },
+                    { name: "Description", type: "mediumtext", key: "", extra: "NULL", desc: "Explanation of the service and treatment details." },
+                    { name: "Cost", type: "int(10)", key: "", extra: "NULL", desc: "Price of the service." },
+                    { name: "CreationDate", type: "timestamp", key: "", extra: "current_timestamp()", desc: "Creation date." }
+                ]
+            },
+            tblappointment: {
+                name: "tblappointment",
+                title: "Appointments (tblappointment)",
+                description: "Main business table mapping clients to dates, time slots, and requested services. Supports a two-level status confirmation workflow (Admin & Stylist).",
+                sql: `CREATE TABLE \`tblappointment\` (\n  \`ID\` int(10) NOT NULL AUTO_INCREMENT,\n  \`AptNumber\` varchar(80) DEFAULT NULL,\n  \`Name\` varchar(120) DEFAULT NULL,\n  \`Email\` varchar(120) DEFAULT NULL,\n  \`PhoneNumber\` bigint(11) DEFAULT NULL,\n  \`AptDate\` varchar(120) DEFAULT NULL,\n  \`AptTime\` varchar(120) DEFAULT NULL,\n  \`Services\` varchar(120) DEFAULT NULL,\n  \`ApplyDate\` timestamp NULL DEFAULT current_timestamp(),\n  \`Remark\` varchar(250) NOT NULL,\n  \`Status\` varchar(50) NOT NULL,\n  \`StylistId\` int(10) DEFAULT NULL,\n  \`StylistRemark\` varchar(250) DEFAULT NULL,\n  \`StylistStatus\` varchar(10) NOT NULL DEFAULT '',\n  \`RemarkDate\` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE current_timestamp(),\n  PRIMARY KEY (\`ID\`)\n) ENGINE=InnoDB DEFAULT CHARSET=latin1;`,
+                columns: [
+                    { name: "ID", type: "int(10)", key: "PK", extra: "AUTO_INCREMENT", desc: "Unique booking identifier." },
+                    { name: "AptNumber", type: "varchar(80)", key: "", extra: "NULL", desc: "Unique auto-generated reference number." },
+                    { name: "Name", type: "varchar(120)", key: "", extra: "NULL", desc: "Client's name." },
+                    { name: "Email", type: "varchar(120)", key: "", extra: "NULL", desc: "Client's contact email." },
+                    { name: "PhoneNumber", type: "bigint(11)", key: "", extra: "NULL", desc: "Client's contact phone number." },
+                    { name: "AptDate", type: "varchar(120)", key: "", extra: "NULL", desc: "Scheduled booking date." },
+                    { name: "AptTime", type: "varchar(120)", key: "", extra: "NULL", desc: "Scheduled time slot." },
+                    { name: "Services", type: "varchar(120)", key: "", extra: "NULL", desc: "Selected services." },
+                    { name: "ApplyDate", type: "timestamp", key: "", extra: "current_timestamp()", desc: "Timestamp when appointment request was sent." },
+                    { name: "Remark", type: "varchar(250)", key: "", extra: "NOT NULL", desc: "Notes or remarks added by Admin." },
+                    { name: "Status", type: "varchar(50)", key: "", extra: "NOT NULL", desc: "Admin approval: (1 = Accepted, 2 = Rejected, empty = Pending)." },
+                    { name: "StylistId", type: "int(10)", key: "FK", extra: "NULL", desc: "Links to tblstylists(ID) for the stylist choice." },
+                    { name: "StylistRemark", type: "varchar(250)", key: "", extra: "NULL", desc: "Remarks added by the stylist." },
+                    { name: "StylistStatus", type: "varchar(10)", key: "", extra: "NOT NULL", desc: "Stylist response: (1 = Accepted, 2 = Rejected, empty = Pending)." },
+                    { name: "RemarkDate", type: "timestamp", key: "", extra: "current_timestamp()", desc: "Last updated timestamp." }
+                ]
+            },
+            tblinvoice: {
+                name: "tblinvoice",
+                title: "Invoice / Billing (tblinvoice)",
+                description: "Tracks salon purchases and bills. Multiple services are grouped under a unique BillingId representing a single print invoice.",
+                sql: `CREATE TABLE \`tblinvoice\` (\n  \`id\` int(11) NOT NULL AUTO_INCREMENT,\n  \`Userid\` int(11) DEFAULT NULL,\n  \`ServiceId\` int(11) DEFAULT NULL,\n  \`BillingId\` int(11) DEFAULT NULL,\n  \`PostingDate\` timestamp NULL DEFAULT current_timestamp(),\n  PRIMARY KEY (\`id\`)\n) ENGINE=InnoDB DEFAULT CHARSET=latin1;`,
+                columns: [
+                    { name: "id", type: "int(11)", key: "PK", extra: "AUTO_INCREMENT", desc: "Individual line item identifier." },
+                    { name: "Userid", type: "int(11)", key: "FK", extra: "NULL", desc: "Customer ID. Links to tblcustomers(ID)." },
+                    { name: "ServiceId", type: "int(11)", key: "FK", extra: "NULL", desc: "Service ID. Links to tblservices(ID)." },
+                    { name: "BillingId", type: "int(11)", key: "", extra: "NULL", desc: "Invoice receipt number grouping all items together." },
+                    { name: "PostingDate", type: "timestamp", key: "", extra: "current_timestamp()", desc: "Billing creation date." }
+                ]
+            },
+            tblstylist_services: {
+                name: "tblstylist_services",
+                title: "Stylist Service Map (tblstylist_services)",
+                description: "Junction table mapping stylists to specific services they specialize in. Enables booking filter based on expert specialty.",
+                sql: `CREATE TABLE IF NOT EXISTS \`tblstylist_services\` (\n  \`ID\` int(10) NOT NULL AUTO_INCREMENT,\n  \`StylistId\` int(10) NOT NULL,\n  \`ServiceId\` int(10) NOT NULL,\n  PRIMARY KEY (\`ID\`),\n  UNIQUE KEY \`stylist_service\` (\`StylistId\`,\`ServiceId\`)\n) ENGINE=InnoDB DEFAULT CHARSET=latin1;`,
+                columns: [
+                    { name: "ID", type: "int(10)", key: "PK", extra: "AUTO_INCREMENT", desc: "Association identifier." },
+                    { name: "StylistId", type: "int(10)", key: "FK", extra: "NOT NULL", desc: "Stylist ID. Links to tblstylists(ID)." },
+                    { name: "ServiceId", type: "int(10)", key: "FK", extra: "NOT NULL", desc: "Service ID. Links to tblservices(ID)." }
+                ]
+            },
+            tblpage: {
+                name: "tblpage",
+                title: "CMS Pages (tblpage)",
+                description: "Stores static page contents (About Us, Contact Us) managed by the admin panel.",
+                sql: `CREATE TABLE \`tblpage\` (\n  \`ID\` int(10) NOT NULL AUTO_INCREMENT,\n  \`PageType\` varchar(200) DEFAULT NULL,\n  \`PageTitle\` mediumtext DEFAULT NULL,\n  \`PageDescription\` mediumtext DEFAULT NULL,\n  \`Email\` varchar(200) DEFAULT NULL,\n  \`MobileNumber\` bigint(10) DEFAULT NULL,\n  \`Timing\` varchar(200) NOT NULL,\n  \`UpdationDate\` date DEFAULT NULL,\n  PRIMARY KEY (\`ID\`)\n) ENGINE=InnoDB DEFAULT CHARSET=latin1;`,
+                columns: [
+                    { name: "ID", type: "int(10)", key: "PK", extra: "AUTO_INCREMENT", desc: "Unique page identifier." },
+                    { name: "PageType", type: "varchar(200)", key: "", extra: "NULL", desc: "Page slug token (e.g. aboutus, contactus)." },
+                    { name: "PageTitle", type: "mediumtext", key: "", extra: "NULL", desc: "Page navigation title." },
+                    { name: "PageDescription", type: "mediumtext", key: "", extra: "NULL", desc: "HTML page markup text content." },
+                    { name: "Email", type: "varchar(200)", key: "", extra: "NULL", desc: "Salon contact email details." },
+                    { name: "MobileNumber", type: "bigint(10)", key: "", extra: "NULL", desc: "Salon contact mobile number." },
+                    { name: "Timing", type: "varchar(200)", key: "", extra: "NOT NULL", desc: "Salon operating timing." },
+                    { name: "UpdationDate", type: "date", key: "", extra: "NULL", desc: "Last updated timestamp." }
+                ]
+            },
+            tblsubscriber: {
+                name: "tblsubscriber",
+                title: "Subscriber Leads (tblsubscriber)",
+                description: "Captures marketing newsletter emails collected from website footer subscription field.",
+                sql: `CREATE TABLE \`tblsubscriber\` (\n  \`ID\` int(5) NOT NULL AUTO_INCREMENT,\n  \`Email\` varchar(200) DEFAULT NULL,\n  \`DateofSub\` timestamp NOT NULL DEFAULT current_timestamp(),\n  PRIMARY KEY (\`ID\`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`,
+                columns: [
+                    { name: "ID", type: "int(5)", key: "PK", extra: "AUTO_INCREMENT", desc: "Unique subscriber row number." },
+                    { name: "Email", type: "varchar(200)", key: "", extra: "NULL", desc: "Subscriber email address." },
+                    { name: "DateofSub", type: "timestamp", key: "", extra: "current_timestamp()", desc: "Subscription registration date." }
+                ]
+            }
+        };
+
+        // Viewport Zoom & Pan State management
+        const state = {
+            chen: { zoom: 0.85, panX: 0, panY: 0, isDragging: false, startX: 0, startY: 0 },
+            relational: { zoom: 0.85, panX: 0, panY: 0, isDragging: false, startX: 0, startY: 0 }
+        };
+
+        let currentActiveMode = 'chen'; // 'chen' or 'relational'
+
+        // Initialize Mermaid
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            securityLevel: 'loose',
+            flowchart: {
+                useMaxWidth: false,
+                htmlLabels: true
+            }
+        });
+
+        // Set up Event Listeners on DOM Load
+        document.addEventListener('DOMContentLoaded', () => {
+            setupNavigationControls();
+            setupZoomAndPan('chen');
+            setupZoomAndPan('relational');
+            setupSearchHighlighting();
+            setupObjectInspector();
+            
+            // Wait for Mermaid render to center both diagrams initially
+            setTimeout(() => {
+                resetViewport('chen');
+                resetViewport('relational');
+                attachSvgClickHandlers();
+            }, 1000);
+        });
+
+        // Navigation mode switcher
+        function setupNavigationControls() {
+            const btnChen = document.getElementById('btn-view-chen');
+            const btnRelational = document.getElementById('btn-view-relational');
+            const chenViewport = document.getElementById('chen-viewport');
+            const relationalViewport = document.getElementById('relational-viewport');
+            
+            const legendChen = document.getElementById('legend-chen-box');
+            const legendRelational = document.getElementById('legend-relational-box');
+
+            btnChen.addEventListener('click', () => {
+                if (currentActiveMode === 'chen') return;
+                currentActiveMode = 'chen';
+                btnChen.classList.add('active');
+                btnRelational.classList.remove('active');
+                
+                chenViewport.classList.remove('inactive');
+                chenViewport.classList.add('active');
+                relationalViewport.classList.remove('active');
+                relationalViewport.classList.add('inactive');
+                
+                legendChen.style.display = 'flex';
+                legendRelational.style.display = 'none';
+                resetViewport('chen');
+            });
+
+            btnRelational.addEventListener('click', () => {
+                if (currentActiveMode === 'relational') return;
+                currentActiveMode = 'relational';
+                btnRelational.classList.add('active');
+                btnChen.classList.remove('active');
+                
+                relationalViewport.classList.remove('inactive');
+                relationalViewport.classList.add('active');
+                chenViewport.classList.remove('active');
+                chenViewport.classList.add('inactive');
+                
+                legendRelational.style.display = 'flex';
+                legendChen.style.display = 'none';
+                resetViewport('relational');
+            });
+
+            // Viewport buttons mapping
+            document.getElementById('btn-zoom-in').addEventListener('click', () => zoom(1.15));
+            document.getElementById('btn-zoom-out').addEventListener('click', () => zoom(0.85));
+            document.getElementById('btn-zoom-reset').addEventListener('click', () => resetViewport(currentActiveMode));
+            document.getElementById('btn-export-svg').addEventListener('click', exportSvgDiagram);
+            document.getElementById('btn-export-png').addEventListener('click', exportPngDiagram);
+        }
+
+        // Zoom & Pan Implementation
+        function setupZoomAndPan(mode) {
+            const viewport = document.getElementById(`${mode}-viewport`);
+            const wrapper = document.getElementById(`${mode}-wrapper`);
+            const s = state[mode];
+
+            // Wheel zooming
+            viewport.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const scaleFactor = 1.08;
+                if (e.deltaY < 0) {
+                    s.zoom = Math.min(s.zoom * scaleFactor, 3.5);
+                } else {
+                    s.zoom = Math.max(s.zoom / scaleFactor, 0.15);
+                }
+                updateTransform(mode);
+            });
+
+            // Mouse down -> Drag start
+            viewport.addEventListener('mousedown', (e) => {
+                if (e.button !== 0) return; // Left click only
+                s.isDragging = true;
+                s.startX = e.clientX - s.panX;
+                s.startY = e.clientY - s.panY;
+                viewport.style.cursor = 'grabbing';
+                e.preventDefault();
+            });
+
+            // Mouse move -> Drag update
+            window.addEventListener('mousemove', (e) => {
+                if (!s.isDragging) return;
+                s.panX = e.clientX - s.startX;
+                s.panY = e.clientY - s.startY;
+                updateTransform(mode);
+            });
+
+            // Mouse up -> Drag release
+            window.addEventListener('mouseup', () => {
+                if (s.isDragging) {
+                    s.isDragging = false;
+                    viewport.style.cursor = 'grab';
+                }
+            });
+
+            // Touch support for Mobile
+            viewport.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 1) {
+                    s.isDragging = true;
+                    s.startX = e.touches[0].clientX - s.panX;
+                    s.startY = e.touches[0].clientY - s.panY;
+                }
+            });
+
+            viewport.addEventListener('touchmove', (e) => {
+                if (!s.isDragging || e.touches.length !== 1) return;
+                s.panX = e.touches[0].clientX - s.startX;
+                s.panY = e.touches[0].clientY - s.startY;
+                updateTransform(mode);
+            });
+
+            viewport.addEventListener('touchend', () => {
+                s.isDragging = false;
+            });
+        }
+
+        function zoom(factor) {
+            const s = state[currentActiveMode];
+            s.zoom = Math.max(0.15, Math.min(s.zoom * factor, 3.5));
+            updateTransform(currentActiveMode);
+        }
+
+        function resetViewport(mode) {
+            const s = state[mode];
+            const viewport = document.getElementById(`${mode}-viewport`);
+            const inner = document.getElementById(`${mode}-wrapper`);
+            
+            s.zoom = mode === 'chen' ? 0.7 : 0.8;
+            s.panX = 0;
+            s.panY = 0;
+            
+            updateTransform(mode);
+        }
+
+        function updateTransform(mode) {
+            const wrapper = document.getElementById(`${mode}-wrapper`);
+            const s = state[mode];
+            wrapper.style.transform = `translate(${s.panX}px, ${s.panY}px) scale(${s.zoom})`;
+        }
+
+        // Click selection of nodes inside SVG
+        function attachSvgClickHandlers() {
+            document.addEventListener('click', (e) => {
+                const node = e.target.closest('.node');
+                if (!node) return;
+
+                // Grab class or label text
+                const textNode = node.querySelector('.nodeLabel') || node.querySelector('text');
+                if (!textNode) return;
+
+                const label = textNode.textContent.trim().toLowerCase();
+                
+                // Map the labels to our table keys
+                let targetKey = null;
+
+                if (label.includes('admin') || label.includes('tbladmin')) {
+                    targetKey = 'tbladmin';
+                } else if (label.includes('client') || label.includes('customer') || label.includes('tblcustomers')) {
+                    targetKey = 'tblcustomers';
+                } else if (label.includes('services') || label.includes('tblservices')) {
+                    targetKey = 'tblservices';
+                } else if (label.includes('stylist') || label.includes('tblstylists')) {
+                    targetKey = 'tblstylists';
+                } else if (label.includes('appointment') || label.includes('tblappointment')) {
+                    targetKey = 'tblappointment';
+                } else if (label.includes('invoice') || label.includes('tblinvoice')) {
+                    targetKey = 'tblinvoice';
+                } else if (label.includes('services map') || label.includes('tblstylist_services')) {
+                    targetKey = 'tblstylist_services';
+                } else if (label.includes('page') || label.includes('cms') || label.includes('tblpage')) {
+                    targetKey = 'tblpage';
+                } else if (label.includes('subscriber') || label.includes('tblsubscriber')) {
+                    targetKey = 'tblsubscriber';
+                }
+
+                if (targetKey) {
+                    selectObject(targetKey);
+                    // Add visual highlight feedback immediately on click
+                    document.querySelectorAll('.node').forEach(n => n.removeAttribute('filter'));
+                    node.setAttribute('filter', 'drop-shadow(0 0 10px #14b8a6)');
+                }
+            });
+        }
+
+        // Show detailed table content inside the Inspector
+        function selectObject(key) {
+            const data = schemaData[key];
+            if (!data) return;
+
+            document.getElementById('inspector-empty').style.display = 'none';
+            const content = document.getElementById('inspector-content');
+            content.style.display = 'flex';
+
+            document.getElementById('ins-table-name').innerHTML = `<i class="fa-solid fa-table"></i> ${data.title}`;
+            document.getElementById('ins-table-desc').innerText = data.description;
+            
+            const columnList = document.getElementById('ins-column-list');
+            columnList.innerHTML = '';
+
+            data.columns.forEach(col => {
+                const li = document.createElement('li');
+                li.className = 'column-item';
+                
+                let keySpan = '';
+                if (col.key === 'PK') {
+                    keySpan = `<span class="col-key key-pk">PK</span>`;
+                } else if (col.key === 'FK') {
+                    keySpan = `<span class="col-key key-fk">FK</span>`;
+                }
+
+                li.innerHTML = `
+                    <div class="column-meta">
+                        <span class="col-name">${col.name}</span>
+                        <div>
+                            <span class="col-type">${col.type}</span>
+                            ${keySpan}
+                        </div>
+                    </div>
+                    <div class="col-desc">${col.desc} ${col.extra !== 'NULL' && col.extra !== '' ? `<i>(${col.extra})</i>` : ''}</div>
+                `;
+                columnList.appendChild(li);
+            });
+
+            // Inject SQL code
+            document.getElementById('ins-sql-text').innerText = data.sql;
+            
+            // Auto hide SQL container initially when shifting items
+            document.getElementById('ins-sql-code').style.display = 'none';
+            document.getElementById('btn-toggle-sql').innerHTML = `<i class="fa-solid fa-code"></i> Show Code`;
+        }
+
+        // Setup Interactive Inspector toggles & triggers
+        function setupObjectInspector() {
+            const toggleSql = document.getElementById('btn-toggle-sql');
+            const sqlBlock = document.getElementById('ins-sql-code');
+            const copySqlBtn = document.getElementById('btn-copy-sql-code');
+
+            toggleSql.addEventListener('click', () => {
+                if (sqlBlock.style.display === 'none') {
+                    sqlBlock.style.display = 'block';
+                    toggleSql.innerHTML = `<i class="fa-solid fa-chevron-up"></i> Hide Code`;
+                } else {
+                    sqlBlock.style.display = 'none';
+                    toggleSql.innerHTML = `<i class="fa-solid fa-code"></i> Show Code`;
+                }
+            });
+
+            copySqlBtn.addEventListener('click', () => {
+                const codeText = document.getElementById('ins-sql-text').innerText;
+                navigator.clipboard.writeText(codeText).then(() => {
+                    showToast('SQL Create query copied to clipboard!');
+                });
+            });
+        }
+
+        // Toast notification handler
+        function showToast(message) {
+            const toast = document.getElementById('copy-toast');
+            document.getElementById('toast-message').innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Search and Glow matching nodes inside SVG
+        function setupSearchHighlighting() {
+            const searchInput = document.getElementById('search-input');
+            
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase().trim();
+                
+                // Clear any previous glowing filters
+                document.querySelectorAll('.node').forEach(node => {
+                    node.classList.remove('highlighted-node');
+                    node.removeAttribute('filter');
+                });
+
+                if (query.length < 2) return;
+
+                // Loop through all svg elements and check text labels
+                const nodes = document.querySelectorAll('.node');
+                let foundMatch = false;
+
+                nodes.forEach(node => {
+                    const textNode = node.querySelector('.nodeLabel') || node.querySelector('text');
+                    if (!textNode) return;
+                    
+                    const labelText = textNode.textContent.toLowerCase();
+                    
+                    if (labelText.includes(query)) {
+                        node.classList.add('highlighted-node');
+                        node.setAttribute('filter', 'drop-shadow(0 0 10px #06b6d4)');
+                        foundMatch = true;
+                    }
+                });
+
+                // Auto display inspector if user types exact table matches
+                for (const key in schemaData) {
+                    if (query === key.toLowerCase() || query === schemaData[key].name.replace('tbl', '')) {
+                        selectObject(key);
+                        break;
+                    }
+                }
+            });
+        }
+
+        // Export active diagram as SVG file
+        function exportSvgDiagram() {
+            const wrapper = document.getElementById(`${currentActiveMode}-wrapper`);
+            const svgElement = wrapper.querySelector('svg');
+            
+            if (!svgElement) {
+                showToast('Failed to export: Diagram is loading.');
+                return;
+            }
+
+            try {
+                // Clone the SVG so we don't mess up the live transformations
+                const svgClone = svgElement.cloneNode(true);
+                
+                // Set fixed sizing metadata for clean file render
+                svgClone.setAttribute('width', '100%');
+                svgClone.setAttribute('height', '100%');
+                
+                const serializer = new XMLSerializer();
+                const svgString = serializer.serializeToString(svgClone);
+                
+                const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+                const blobUrl = URL.createObjectURL(blob);
+                
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = `msms_${currentActiveMode}_schema_diagram.svg`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                URL.revokeObjectURL(blobUrl);
+                showToast('Vector SVG diagram downloaded successfully!');
+            } catch (err) {
+                console.error(err);
+                showToast('Error exporting SVG file.');
+            }
+        }
+
+        // Export active diagram as high-resolution PNG image file
+        function exportPngDiagram() {
+            const wrapper = document.getElementById(`${currentActiveMode}-wrapper`);
+            const svgElement = wrapper.querySelector('svg');
+            
+            if (!svgElement) {
+                showToast('Failed to export: Diagram is loading.');
+                return;
+            }
+
+            try {
+                // Clone the SVG so we don't modify the active screen rendering
+                const svgClone = svgElement.cloneNode(true);
+                
+                // Fetch structural bounds or base sizing of diagram
+                let bbox = { x: 0, y: 0, width: 900, height: 700 };
+                try {
+                    const activeBbox = svgElement.getBBox();
+                    if (activeBbox.width > 0 && activeBbox.height > 0) {
+                        bbox = activeBbox;
+                    }
+                } catch(e) {
+                    if (svgElement.viewBox && svgElement.viewBox.baseVal) {
+                        bbox.width = svgElement.viewBox.baseVal.width || 900;
+                        bbox.height = svgElement.viewBox.baseVal.height || 700;
+                    }
+                }
+
+                // Add bounding layout cushion padding around elements
+                const padding = 60;
+                const width = bbox.width + padding * 2;
+                const height = bbox.height + padding * 2;
+                
+                svgClone.setAttribute('width', width);
+                svgClone.setAttribute('height', height);
+                svgClone.setAttribute('viewBox', `${bbox.x - padding} ${bbox.y - padding} ${width} ${height}`);
+                
+                // Embed dark midnight background inside SVG file
+                svgClone.style.backgroundColor = '#0d1220';
+                
+                const serializer = new XMLSerializer();
+                const svgString = serializer.serializeToString(svgClone);
+                
+                const img = new Image();
+                const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+                const blobUrl = URL.createObjectURL(svgBlob);
+                
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    
+                    // Render at high-DPI scaling (2x size) for absolute razor-sharp print quality
+                    const dpiScale = 2.0;
+                    canvas.width = width * dpiScale;
+                    canvas.height = height * dpiScale;
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx.scale(dpiScale, dpiScale);
+                    
+                    // Render solid base fill
+                    ctx.fillStyle = '#0d1220';
+                    ctx.fillRect(0, 0, width, height);
+                    
+                    // Draw reconstructed image
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // Export Blob image file download
+                    canvas.toBlob((pngBlob) => {
+                        const pngUrl = URL.createObjectURL(pngBlob);
+                        const link = document.createElement('a');
+                        link.href = pngUrl;
+                        link.download = `msms_${currentActiveMode}_schema_diagram.png`;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        
+                        URL.revokeObjectURL(pngUrl);
+                        URL.revokeObjectURL(blobUrl);
+                        showToast('High-resolution PNG image downloaded!');
+                    }, 'image/png');
+                };
+                
+                img.src = blobUrl;
+            } catch (err) {
+                console.error(err);
+                showToast('Error generating PNG image.');
+            }
+        }
+    </script>
+</body>
+</html>

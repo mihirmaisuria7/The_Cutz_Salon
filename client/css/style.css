@@ -1,0 +1,104 @@
+:root {
+  --primary: #8b5a2b;
+  --primary-dark: #6d4522;
+  --accent: #d4a574;
+  --bg: #faf7f4;
+  --card: #ffffff;
+  --text: #2c2416;
+  --muted: #6b5d4f;
+  --success: #2d6a4f;
+  --danger: #9b2226;
+  --border: #e8dfd4;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+  min-height: 100vh;
+}
+
+.client-nav {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  color: #fff;
+  padding: 0.75rem 0;
+  box-shadow: 0 2px 12px rgba(0,0,0,.12);
+}
+
+.client-nav .brand {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #fff;
+  text-decoration: none;
+}
+
+.client-nav .nav-link {
+  color: rgba(255,255,255,.9) !important;
+  font-weight: 500;
+  margin: 0 .25rem;
+}
+
+.client-nav .nav-link:hover,
+.client-nav .nav-link.active {
+  color: #fff !important;
+  background: rgba(255,255,255,.15);
+  border-radius: 6px;
+}
+
+.page-wrap { padding: 2rem 0 3rem; }
+
+.card-panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(44,36,22,.06);
+  margin-bottom: 1.5rem;
+}
+
+.card-panel h2, .card-panel h3 { margin-top: 0; color: var(--primary-dark); }
+
+.stat-card {
+  text-align: center;
+  padding: 1.25rem;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #fff, #f5efe8);
+  border: 1px solid var(--border);
+}
+
+.stat-card .num { font-size: 2rem; font-weight: 700; color: var(--primary); }
+.stat-card .lbl { color: var(--muted); font-size: .9rem; }
+
+.btn-salon {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.btn-salon:hover {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+  color: #fff;
+}
+
+.table-salon thead { background: var(--primary); color: #fff; }
+
+.badge-pending { background: #ffc107; color: #000; }
+.badge-accepted { background: var(--success); }
+.badge-rejected { background: var(--danger); }
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: var(--primary-dark);
+  font-weight: 700;
+}
