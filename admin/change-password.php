@@ -1,6 +1,6 @@
-<?php
+﻿<?php
 session_start();
-include('includes/dbconnection.php');
+include('includes/supabase_db.php');
 error_reporting(0);
 include_once('includes/auth_check.php');
 if(isset($_POST['submit']))
@@ -8,10 +8,10 @@ if(isset($_POST['submit']))
 $adminid=$_SESSION['bpmsaid'];
 $cpassword=md5($_POST['currentpassword']);
 $newpassword=md5($_POST['newpassword']);
-$query=mysqli_query($con,"select ID from tbladmin where ID='$adminid' and   Password='$cpassword'");
-$row=mysqli_fetch_array($query);
+$query=db_query("select ID from tbladmin where ID='$adminid' and   Password='$cpassword'");
+$row=db_fetch_array($query);
 if ($row) {
-$ret=mysqli_query($con,"update tbladmin set Password='$newpassword' where ID='$adminid'");
+$ret=db_query("update tbladmin set Password='$newpassword' where ID='$adminid'");
 
  echo '<script>alert("Your password successully changed")</script>';
 } else {
@@ -95,9 +95,9 @@ return true;
 
   <?php
 $adminid=$_SESSION['bpmsaid'];
-$ret=mysqli_query($con,"select * from tbladmin where ID='$adminid'");
+$ret=db_query("select * from tbladmin where ID='$adminid'");
 $cnt=1;
-while ($row=mysqli_fetch_array($ret)) {
+while ($row=db_fetch_array($ret)) {
 
 ?>
 							 <div class="form-group"> <label for="exampleInputEmail1">Current Password</label> <input type="password" name="currentpassword" class="form-control" required= "true" value=""> </div> <div class="form-group"> <label for="exampleInputPassword1">New Password</label> <input type="password" name="newpassword" class="form-control" value="" required="true"> </div>
@@ -141,3 +141,4 @@ while ($row=mysqli_fetch_array($ret)) {
    <script src="js/bootstrap.js"> </script>
 </body>
 </html>
+

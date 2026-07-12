@@ -1,7 +1,7 @@
-<?php
+﻿<?php
 session_start();
 error_reporting(0);
-include('includes/dbconnection.php');
+include('includes/supabase_db.php');
 error_reporting(0);
 
 if(isset($_POST['submit']))
@@ -10,7 +10,7 @@ if(isset($_POST['submit']))
     $email=$_SESSION['email'];
     $password=md5($_POST['newpassword']);
 
-        $query=mysqli_query($con,"update tbladmin set Password='$password'  where  Email='$email' && MobileNumber='$contactno' ");
+        $query=db_query("update tbladmin set Password='$password'  where  Email='$email' && MobileNumber='$contactno' ");
    if($query)
    {
 echo "<script>alert('Password successfully changed');</script>";
@@ -128,3 +128,4 @@ return true;
    <script src="js/bootstrap.js"> </script>
 </body>
 </html>
+

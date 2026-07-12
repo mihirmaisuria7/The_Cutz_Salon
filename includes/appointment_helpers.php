@@ -9,28 +9,28 @@ function msms_stylist_name($con, $stylistId)
         return '—';
     }
     $id = intval($stylistId);
-    $r = mysqli_fetch_array(mysqli_query($con, "SELECT StylistName FROM tblstylists WHERE ID='$id'"));
-    return $r ? $r['StylistName'] : '—';
+    $r = db_fetch_array(db_query("SELECT * FROM tblstylists WHERE ID='$id' LIMIT 1"));
+    return $r ? ($r['StylistName'] ?? '—') : '—';
 }
 
 function msms_has_table($con, $tableName)
 {
-    $t = mysqli_real_escape_string($con, $tableName);
-    $q = mysqli_query($con, "SHOW TABLES LIKE '$t'");
-    return ($q && mysqli_num_rows($q) > 0);
+    $t = db_real_escape_string($tableName);
+    $q = db_query("SELECT * FROM information_schema.tables WHERE table_name='$t' LIMIT 1");
+    return ($q && db_num_rows($q) > 0);
 }
 
 function msms_has_column($con, $table, $column)
 {
-    $table = mysqli_real_escape_string($con, $table);
-    $column = mysqli_real_escape_string($con, $column);
-    $q = mysqli_query($con, "SHOW COLUMNS FROM `$table` LIKE '$column'");
-    return ($q && mysqli_num_rows($q) > 0);
+    $table = db_real_escape_string($table);
+    $column = db_real_escape_string($column);
+    $q = db_query("SELECT * FROM information_schema.columns WHERE table_name='$table' AND column_name='$column' LIMIT 1");
+    return ($q && db_num_rows($q) > 0);
 }
 
 function msms_stylists_for_service($con, $serviceName)
 {
-    $serviceName = mysqli_real_escape_string($con, $serviceName);
+    $serviceName = db_real_escape_string($serviceName);
     if (msms_has_table($con, 'tblstylist_services')) {
         $sql = "SELECT DISTINCT s.ID, s.StylistName, s.Specialty, s.MobileNumber, s.Email
             FROM tblstylists s
@@ -42,9 +42,9 @@ function msms_stylists_for_service($con, $serviceName)
         $sql = "SELECT ID, StylistName, Specialty, MobileNumber, Email FROM tblstylists ORDER BY StylistName";
     }
     $rows = [];
-    $ret = mysqli_query($con, $sql);
+    $ret = db_query($sql);
     if ($ret) {
-        while ($row = mysqli_fetch_array($ret)) {
+        while ($row = db_fetch_array($ret)) {
             $rows[] = $row;
         }
     }
@@ -56,12 +56,12 @@ function msms_services_for_stylist($con, $stylistId)
     $sid = intval($stylistId);
     $names = [];
     if (msms_has_table($con, 'tblstylist_services')) {
-        $ret = mysqli_query($con, "SELECT srv.ServiceName, srv.Cost
+        $ret = db_query("SELECT srv.ServiceName, srv.Cost
             FROM tblstylist_services ss
             INNER JOIN tblservices srv ON srv.ID = ss.ServiceId
             WHERE ss.StylistId='$sid'
             ORDER BY srv.ServiceName");
-        while ($row = mysqli_fetch_array($ret)) {
+        while ($row = db_fetch_array($ret)) {
             $names[] = $row;
         }
     }

@@ -9,15 +9,15 @@ include('includes/header.php');
   <p class="text-muted">See which stylists specialize in each service, then book your preferred expert.</p>
   <div class="row g-3">
 <?php
-$ret = mysqli_query($con, "SELECT * FROM tblservices ORDER BY ServiceName");
-while ($row = mysqli_fetch_array($ret)) {
+$ret = db_query("SELECT * FROM tblservices ORDER BY ServiceName");
+while ($row = db_fetch_array($ret)) {
     $experts = msms_stylists_for_service($con, $row['ServiceName']);
 ?>
     <div class="col-md-6 col-lg-4">
       <div class="border rounded p-3 h-100" style="border-color:var(--border)!important">
         <h5 class="text-primary"><?php echo htmlspecialchars($row['ServiceName']); ?></h5>
         <p class="small text-muted mb-2"><?php echo htmlspecialchars(substr($row['Description'], 0, 120)); ?>...</p>
-        <strong class="text-success d-block mb-2">₹<?php echo intval($row['Cost']); ?></strong>
+        <strong class="text-success d-block mb-2">Rs. <?php echo intval($row['Cost']); ?></strong>
         <?php if (count($experts) > 0) { ?>
         <p class="small fw-semibold mb-1"><i class="bi bi-person-badge"></i> Expert stylists:</p>
         <ul class="small mb-2 ps-3">

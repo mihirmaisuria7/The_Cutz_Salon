@@ -1,7 +1,7 @@
-<?php
+﻿<?php
 session_start();
 error_reporting(0);
-include('includes/dbconnection.php');
+include('includes/supabase_db.php');
 include_once('includes/auth_check.php');
 ?>
 <!DOCTYPE HTML>
@@ -81,9 +81,9 @@ $y2=date("Y",$month2);
 </tr>
 </thead>
 <?php
-$ret=mysqli_query($con,"select month(PostingDate) as lmonth,year(PostingDate) as lyear,sum(Cost) as totalprice from  tblinvoice join tblservices on tblservices.ID= tblinvoice.ServiceId where date(tblinvoice.PostingDate) between '$fdate' and '$tdate' group by lmonth,lyear");
+$ret=db_query("select month(PostingDate) as lmonth,year(PostingDate) as lyear,sum(Cost) as totalprice from  tblinvoice join tblservices on tblservices.ID= tblinvoice.ServiceId where date(tblinvoice.PostingDate) between '$fdate' and '$tdate' group by lmonth,lyear");
 $cnt=1;
-while ($row=mysqli_fetch_array($ret)) {
+while ($row=db_fetch_array($ret)) {
 
 ?>
               
@@ -122,10 +122,10 @@ $y2=date("Y",$year2);
 </tr>
 </thead>
 <?php
-$ret=mysqli_query($con,"select year(PostingDate) as lyear,sum(Cost) as totalprice from  tblinvoice join tblservices on tblservices.ID= tblinvoice.ServiceId where date(tblinvoice.PostingDate) between '$fdate' and '$tdate' group by lyear");
+$ret=db_query("select year(PostingDate) as lyear,sum(Cost) as totalprice from  tblinvoice join tblservices on tblservices.ID= tblinvoice.ServiceId where date(tblinvoice.PostingDate) between '$fdate' and '$tdate' group by lyear");
 
 $cnt=1;
-while ($row=mysqli_fetch_array($ret)) {
+while ($row=db_fetch_array($ret)) {
 
 ?>
               
@@ -183,3 +183,4 @@ $cnt++;
 	<script src="js/bootstrap.js"> </script>
 </body>
 </html>
+

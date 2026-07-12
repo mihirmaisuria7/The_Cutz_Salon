@@ -1,12 +1,12 @@
-<?php
+﻿<?php
 session_start();
 error_reporting(0);
-include('includes/dbconnection.php');
+include('includes/supabase_db.php');
 include_once('includes/auth_check.php');
 // Code for deletion
 if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])) {
 $id=intval($_GET['id']);
-$query=mysqli_query($con,"delete from tblservices where ID='$id'");
+$query=db_query("delete from tblservices where ID='$id'");
     if ($query) {
      echo "<script>alert('Service deleted.');</script>";
      echo "<script>window.location.href='manage-services.php'</script>";
@@ -72,9 +72,9 @@ $query=mysqli_query($con,"delete from tblservices where ID='$id'");
 						<h4>Update Services:</h4>
 						<table class="table table-bordered"> <thead> <tr> <th>#</th> <th>Service Name</th> <th>Service Price</th> <th>Creation Date</th><th>Action</th> </tr> </thead> <tbody>
 <?php
-$ret=mysqli_query($con,"select *from  tblservices");
+$ret=db_query("select *from  tblservices");
 $cnt=1;
-while ($row=mysqli_fetch_array($ret)) {
+while ($row=db_fetch_array($ret)) {
 
 ?>
 
@@ -120,3 +120,4 @@ $cnt=$cnt+1;
 	<script src="js/bootstrap.js"> </script>
 </body>
 </html>
+

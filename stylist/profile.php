@@ -4,27 +4,27 @@ $pageTitle = 'My Profile';
 $sid = intval($_SESSION['bpmsstid']);
 
 if (isset($_POST['submit'])) {
-    $name = mysqli_real_escape_string($con, $_POST['name']);
-    $email = mysqli_real_escape_string($con, $_POST['email']);
-    $mobilenum = mysqli_real_escape_string($con, $_POST['mobilenum']);
-    $specialty = mysqli_real_escape_string($con, $_POST['specialty']);
-    mysqli_query($con, "UPDATE tblstylists SET StylistName='$name',Email='$email',MobileNumber='$mobilenum',Specialty='$specialty' WHERE ID='$sid'");
+    $name = db_real_escape_string($_POST['name'] ?? '');
+    $email = db_real_escape_string($_POST['email'] ?? '');
+    $mobilenum = db_real_escape_string($_POST['mobilenum'] ?? '');
+    $specialty = db_real_escape_string($_POST['specialty'] ?? '');
+    db_query("UPDATE tblstylists SET StylistName='$name',Email='$email',MobileNumber='$mobilenum',Specialty='$specialty' WHERE ID='$sid'");
     echo "<script>alert('Profile updated successfully.');</script>";
 }
 
 if (isset($_POST['changepass'])) {
-    $old = md5($_POST['oldpass']);
-    $new = md5($_POST['newpass']);
-    $chk = mysqli_query($con, "SELECT ID FROM tblstylists WHERE ID='$sid' AND Password='$old'");
-    if (mysqli_num_rows($chk) > 0) {
-        mysqli_query($con, "UPDATE tblstylists SET Password='$new' WHERE ID='$sid'");
+    $old = md5($_POST['oldpass'] ?? '');
+    $new = md5($_POST['newpass'] ?? '');
+    $chk = db_query("SELECT * FROM tblstylists WHERE ID='$sid' AND Password='$old' LIMIT 1");
+    if (db_num_rows($chk) > 0) {
+        db_query("UPDATE tblstylists SET Password='$new' WHERE ID='$sid'");
         echo "<script>alert('Password changed.');</script>";
     } else {
         echo "<script>alert('Current password is incorrect.');</script>";
     }
 }
 
-$row = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM tblstylists WHERE ID='$sid'"));
+$row = db_fetch_array(db_query("SELECT * FROM tblstylists WHERE ID='$sid' LIMIT 1"));
 include('includes/header.php');
 ?>
 <div class="row g-4">

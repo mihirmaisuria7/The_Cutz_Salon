@@ -3,21 +3,21 @@ include('includes/auth.php');
 require_once __DIR__ . '/../includes/appointment_helpers.php';
 $pageTitle = 'Book Appointment';
 $uid = intval($_SESSION['bpmsuid']);
-$cust = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM tblcustomers WHERE ID='$uid'"));
+$cust = db_fetch_array(db_query( "SELECT * FROM tblcustomers WHERE ID='$uid'"));
 
 $stylistMap = [];
 $servicesList = [];
 $fallbackStylists = [];
-$fsRet = mysqli_query($con, "SELECT ID, StylistName, Specialty FROM tblstylists ORDER BY StylistName");
-while ($st = mysqli_fetch_array($fsRet)) {
+$fsRet = db_query( "SELECT ID, StylistName, Specialty FROM tblstylists ORDER BY StylistName");
+while ($st = db_fetch_array($fsRet)) {
     $fallbackStylists[] = [
         'id' => intval($st['ID']),
         'name' => $st['StylistName'],
         'specialty' => $st['Specialty'] ?? '',
     ];
 }
-$srvList = mysqli_query($con, "SELECT ID, ServiceName, Cost FROM tblservices ORDER BY ServiceName");
-while ($s = mysqli_fetch_array($srvList)) {
+$srvList = db_query("SELECT ID, ServiceName, Cost FROM tblservices ORDER BY ServiceName");
+while ($s = db_fetch_array($srvList)) {
     $servicesList[] = $s;
     $experts = msms_stylists_for_service($con, $s['ServiceName']);
     $stylistMap[$s['ServiceName']] = [];
@@ -36,12 +36,12 @@ while ($s = mysqli_fetch_array($srvList)) {
 
 if (isset($_POST['book'])) {
     $aptnum = strval(rand(100000000, 999999999));
-    $name = mysqli_real_escape_string($con, $cust['Name']);
-    $email = mysqli_real_escape_string($con, $cust['Email']);
-    $phone = $cust['MobileNumber'];
-    $aptdate = mysqli_real_escape_string($con, $_POST['aptdate']);
-    $apttime = mysqli_real_escape_string($con, $_POST['apttime']);
-    $service = mysqli_real_escape_string($con, $_POST['service']);
+    $name = db_real_escape_string($cust['Name'] ?? '');
+    $email = db_real_escape_string($cust['Email'] ?? '');
+    $phone = $cust['MobileNumber'] ?? '';
+    $aptdate = db_real_escape_string($_POST['aptdate'] ?? '');
+    $apttime = db_real_escape_string($_POST['apttime'] ?? '');
+    $service = db_real_escape_string($_POST['service'] ?? '');
     $stylistId = intval($_POST['stylist_id'] ?? 0);
 
     if ($stylistId <= 0) {
@@ -71,11 +71,11 @@ if (isset($_POST['book'])) {
 function build_appointment_insert($con, $aptnum, $name, $email, $phone, $aptdate, $apttime, $service, $stylistSql)
 {
     if (msms_has_column($con, 'tblappointment', 'StylistStatus')) {
-        $q = mysqli_query($con, "INSERT INTO tblappointment(AptNumber,Name,Email,PhoneNumber,AptDate,AptTime,Services,Remark,Status,StylistId,StylistStatus) VALUES('$aptnum','$name','$email','$phone','$aptdate','$apttime','$service','','', $stylistSql, '')");
+        $q = db_query("INSERT INTO tblappointment(AptNumber,Name,Email,PhoneNumber,AptDate,AptTime,Services,Remark,Status,StylistId,StylistStatus) VALUES('$aptnum','$name','$email','$phone','$aptdate','$apttime','$service','','', $stylistSql, '')");
     } elseif (msms_has_column($con, 'tblappointment', 'StylistId')) {
-        $q = mysqli_query($con, "INSERT INTO tblappointment(AptNumber,Name,Email,PhoneNumber,AptDate,AptTime,Services,Remark,Status,StylistId) VALUES('$aptnum','$name','$email','$phone','$aptdate','$apttime','$service','','', $stylistSql)");
+        $q = db_query("INSERT INTO tblappointment(AptNumber,Name,Email,PhoneNumber,AptDate,AptTime,Services,Remark,Status,StylistId) VALUES('$aptnum','$name','$email','$phone','$aptdate','$apttime','$service','','', $stylistSql)");
     } else {
-        $q = mysqli_query($con, "INSERT INTO tblappointment(AptNumber,Name,Email,PhoneNumber,AptDate,AptTime,Services,Remark,Status) VALUES('$aptnum','$name','$email','$phone','$aptdate','$apttime','$service','','')");
+        $q = db_query("INSERT INTO tblappointment(AptNumber,Name,Email,PhoneNumber,AptDate,AptTime,Services,Remark,Status) VALUES('$aptnum','$name','$email','$phone','$aptdate','$apttime','$service','','')");
     }
     return $q;
 }
@@ -97,14 +97,14 @@ include('includes/header.php');
             <select name="service" id="serviceSelect" class="form-select" required>
               <option value="">Select service</option>
               <?php foreach ($servicesList as $s) {
-                  echo '<option value="'.htmlspecialchars($s['ServiceName']).'">'.htmlspecialchars($s['ServiceName']).' — ₹'.intval($s['Cost']).'</option>';
+                  echo '<option value="'.htmlspecialchars($s['ServiceName']).'">'.htmlspecialchars($s['ServiceName']).' - Rs. '.intval($s['Cost']).'</option>';
               } ?>
             </select>
           </div>
           <div class="col-md-12">
             <label class="form-label">Choose stylist <span class="text-danger">*</span></label>
             <select name="stylist_id" id="stylistSelect" class="form-select" required>
-              <option value="">— Select service first —</option>
+              <option value="">â€” Select service first â€”</option>
             </select>
             <div id="stylistHint" class="form-text">Only stylists expert in the selected service are shown.</div>
           </div>
@@ -127,18 +127,18 @@ function refreshStylists() {
   sel.innerHTML = '';
   const list = stylistByService[svc] || [];
   if (!svc) {
-    sel.innerHTML = '<option value="">— Select service first —</option>';
+    sel.innerHTML = '<option value="">- Select service first -</option>';
     return;
   }
   if (list.length === 0) {
-    sel.innerHTML = '<option value="">No stylist listed for this service — contact salon</option>';
+    sel.innerHTML = '<option value="">No stylist listed for this service - contact salon</option>';
     return;
   }
-  sel.innerHTML = '<option value="">— Choose stylist —</option>';
+  sel.innerHTML = '<option value="">- Choose stylist -</option>';
   list.forEach(function (st) {
     const opt = document.createElement('option');
     opt.value = st.id;
-    opt.textContent = st.name + (st.specialty ? ' — ' + st.specialty : '');
+    opt.textContent = st.name + (st.specialty ? ' - ' + st.specialty : '');
     if (preStylistId && st.id === preStylistId) opt.selected = true;
     sel.appendChild(opt);
   });
@@ -156,3 +156,4 @@ if (preStylistId) {
 refreshStylists();
 </script>
 <?php include('includes/footer.php'); ?>
+

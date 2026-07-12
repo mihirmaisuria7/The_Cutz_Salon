@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 include('includes/auth.php');
 $pageTitle = 'My Invoices';
 $uid = intval($_SESSION['bpmsuid']);
@@ -11,9 +11,9 @@ include('includes/header.php');
       <thead><tr><th>#</th><th>Billing ID</th><th>Date</th><th>Action</th></tr></thead>
       <tbody>
 <?php
-$ret = mysqli_query($con, "SELECT DISTINCT BillingId, PostingDate FROM tblinvoice WHERE Userid='$uid' ORDER BY PostingDate DESC");
+$ret = db_query( "SELECT DISTINCT BillingId, PostingDate FROM tblinvoice WHERE Userid='$uid' ORDER BY PostingDate DESC");
 $cnt = 1;
-while ($row = mysqli_fetch_array($ret)) {
+while ($row = db_fetch_array($ret)) {
 ?>
         <tr>
           <td><?php echo $cnt++; ?></td>
@@ -27,3 +27,4 @@ while ($row = mysqli_fetch_array($ret)) {
   </div>
 </div>
 <?php include('includes/footer.php'); ?>
+

@@ -1,7 +1,7 @@
-<?php
+﻿<?php
 session_start();
 error_reporting(0);
-include(__DIR__ . '/../includes/dbconnection.php');
+include(__DIR__ . '/../includes/supabase_db.php');
 
 if (strlen($_SESSION['bpmsuid'] ?? '') > 0) {
     header('location:dashboard.php');
@@ -10,27 +10,27 @@ if (strlen($_SESSION['bpmsuid'] ?? '') > 0) {
 
 $msg = '';
 if (isset($_POST['register'])) {
-    $name = mysqli_real_escape_string($con, $_POST['name']);
-    $email = mysqli_real_escape_string($con, $_POST['email']);
-    $mobilenum = mysqli_real_escape_string($con, $_POST['mobilenum']);
-    $gender = mysqli_real_escape_string($con, $_POST['gender']);
-    $username = mysqli_real_escape_string($con, $_POST['username']);
-    $password = md5($_POST['password']);
-    $details = mysqli_real_escape_string($con, $_POST['details'] ?? '');
+    $name = db_real_escape_string($_POST['name'] ?? '');
+    $email = db_real_escape_string($_POST['email'] ?? '');
+    $mobilenum = db_real_escape_string($_POST['mobilenum'] ?? '');
+    $gender = db_real_escape_string($_POST['gender'] ?? '');
+    $username = db_real_escape_string($_POST['username'] ?? '');
+    $password = md5($_POST['password'] ?? '');
+    $details = db_real_escape_string($_POST['details'] ?? '');
 
-    $chk = mysqli_query($con, "SELECT ID FROM tblcustomers WHERE UserName='$username' OR Email='$email' LIMIT 1");
-    if (mysqli_num_rows($chk) > 0) {
+    $chk = db_query("SELECT * FROM tblcustomers WHERE UserName='$username' OR Email='$email' LIMIT 1");
+    if (db_num_rows($chk) > 0) {
         $msg = 'danger|Username or email already exists.';
     } else {
-        $q = mysqli_query($con, "INSERT INTO tblcustomers(Name,Email,MobileNumber,Gender,Details,UserName,Password) VALUES('$name','$email','$mobilenum','$gender','$details','$username','$password')");
+        $q = db_query("INSERT INTO tblcustomers(Name,Email,MobileNumber,Gender,Details,UserName,Password) VALUES('$name','$email','$mobilenum','$gender','$details','$username','$password')");
         if ($q) {
-            $newid = mysqli_insert_id($con);
+            $newid = db_insert_id();
             $_SESSION['bpmsuid'] = $newid;
             $_SESSION['bpmsuname'] = $username;
             header('location:dashboard.php');
             exit;
         }
-        $msg = 'danger|Registration failed. Run SQL File/client_auth_update.sql first if columns are missing.';
+        $msg = 'danger|Registration failed. Please ensure your Supabase tables contain the expected columns.';
     }
 }
 ?>
@@ -77,3 +77,4 @@ if (isset($_POST['register'])) {
 </div>
 </body>
 </html>
+

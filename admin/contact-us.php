@@ -1,7 +1,7 @@
-<?php
+﻿<?php
 session_start();
 error_reporting(0);
-include('includes/dbconnection.php');
+include('includes/supabase_db.php');
 include_once('includes/auth_check.php');
 if(isset($_POST['submit']))
   {
@@ -12,7 +12,7 @@ $email=$_POST['email'];
 $mobnumber=$_POST['mobnumber'];
 $timing=$_POST['timing'];
      
-    $query=mysqli_query($con,"update tblpage set PageTitle='$pagetitle',Email='$email',MobileNumber='$mobnumber',Timing='$timing',PageDescription='$pagedes' where  PageType='contactus'");
+    $query=db_query("update tblpage set PageTitle='$pagetitle',Email='$email',MobileNumber='$mobnumber',Timing='$timing',PageDescription='$pagedes' where  PageType='contactus'");
     if ($query) {
     
     echo '<script>alert("Contact Us has been updated")</script>';
@@ -83,9 +83,9 @@ $timing=$_POST['timing'];
   }  ?> </p>
   <?php
  
-$ret=mysqli_query($con,"select * from  tblpage where PageType='contactus'");
+$ret=db_query("select * from  tblpage where PageType='contactus'");
 $cnt=1;
-while ($row=mysqli_fetch_array($ret)) {
+while ($row=db_fetch_array($ret)) {
 
 ?>
 
@@ -131,3 +131,4 @@ while ($row=mysqli_fetch_array($ret)) {
    <script src="js/bootstrap.js"> </script>
 </body>
 </html>
+

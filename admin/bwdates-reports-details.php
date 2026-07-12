@@ -1,7 +1,7 @@
-<?php
+﻿<?php
 session_start();
 error_reporting(0);
-include('includes/dbconnection.php');
+include('includes/supabase_db.php');
 include_once('includes/auth_check.php');
 ?>
 <!DOCTYPE HTML>
@@ -72,10 +72,10 @@ $tdate=$_POST['todate'];
 							</tr> 
 							</thead> <tbody>
 <?php
-$ret=mysqli_query($con,"select distinct tblcustomers.Name,tblinvoice.BillingId,tblinvoice.PostingDate from  tblcustomers   
+$ret=db_query("select distinct tblcustomers.Name,tblinvoice.BillingId,tblinvoice.PostingDate from  tblcustomers   
 	join tblinvoice on tblcustomers.ID=tblinvoice.Userid  where date(tblinvoice.PostingDate) between '$fdate' and '$tdate'");
 $cnt=1;
-while ($row=mysqli_fetch_array($ret)) {
+while ($row=db_fetch_array($ret)) {
 
 ?>
 
@@ -125,3 +125,4 @@ $cnt=$cnt+1;
 	<script src="js/bootstrap.js"> </script>
 </body>
 </html>
+

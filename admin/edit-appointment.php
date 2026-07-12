@@ -1,7 +1,7 @@
-<?php
+﻿<?php
 session_start();
 error_reporting(0);
-include('includes/dbconnection.php');
+include('includes/supabase_db.php');
 include_once('includes/auth_check.php');
 ?>
 <!DOCTYPE HTML>
@@ -60,9 +60,9 @@ include_once('includes/auth_check.php');
 						<h4>All Appointment:</h4>
 						<?php
 $cid = intval($_GET['editid'] ?? 0);
-$ret=mysqli_query($con,"select * from tblappointment where ID='$cid'");
+$ret=db_query("select * from tblappointment where ID='$cid'");
 $cnt=1;
-while ($row=mysqli_fetch_array($ret)) {
+while ($row=db_fetch_array($ret)) {
 
 ?>
 						<table class="table table-bordered">
@@ -196,3 +196,4 @@ if($row['Status']=="2")
 	<script src="js/bootstrap.js"> </script>
 </body>
 </html>
+

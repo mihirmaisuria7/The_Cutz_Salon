@@ -1,7 +1,7 @@
-<?php
+﻿<?php
 session_start();
 error_reporting(0);
-include('includes/dbconnection.php');
+include('includes/supabase_db.php');
 include_once('includes/auth_check.php');
 if(isset($_POST['submit']))
   {
@@ -10,7 +10,7 @@ if(isset($_POST['submit']))
    $cost=$_POST['cost'];
 
      
-    $query=mysqli_query($con, "insert into  tblservices(ServiceName,Description,Cost) value('$sername','$des','$cost')");
+    $query=db_query( "insert into  tblservices(ServiceName,Description,Cost) value('$sername','$des','$cost')");
     if ($query) {
     	echo "<script>alert('Service has been added.');</script>"; 
     		echo "<script>window.location.href = 'add-services.php'</script>";   
@@ -119,3 +119,4 @@ if(isset($_POST['submit']))
    <script src="js/bootstrap.js"> </script>
 </body>
 </html>
+

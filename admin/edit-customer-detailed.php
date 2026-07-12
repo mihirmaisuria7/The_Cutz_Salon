@@ -1,7 +1,7 @@
-<?php
+﻿<?php
 session_start();
 error_reporting(0);
-include('includes/dbconnection.php');
+include('includes/supabase_db.php');
 include_once('includes/auth_check.php');
 if(isset($_POST['submit']))
   {
@@ -13,7 +13,7 @@ $details=$_POST['details'];
    
  $eid = intval($_GET['editid'] ?? 0);
      
-    $query=mysqli_query($con, "update  tblcustomers set Name='$name',Email='$email',MobileNumber='$mobilenum',Gender='$gender',Details='$details' where ID='$eid' ");
+    $query=db_query( "update  tblcustomers set Name='$name',Email='$email',MobileNumber='$mobilenum',Gender='$gender',Details='$details' where ID='$eid' ");
     if ($query) {
     
     echo '<script>alert("Customer Detail has been Updated")</script>';
@@ -81,9 +81,9 @@ $details=$_POST['details'];
 								
   <?php
  $cid = intval($_GET['editid'] ?? 0);
-$ret=mysqli_query($con,"select * from  tblcustomers where ID='$cid'");
+$ret=db_query("select * from  tblcustomers where ID='$cid'");
 $cnt=1;
-while ($row=mysqli_fetch_array($ret)) {
+while ($row=db_fetch_array($ret)) {
 
 ?> 
 
@@ -151,3 +151,4 @@ while ($row=mysqli_fetch_array($ret)) {
    <script src="js/bootstrap.js"> </script>
 </body>
 </html>
+

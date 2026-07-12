@@ -4,15 +4,15 @@ $pageTitle = 'Invoice';
 $uid = intval($_SESSION['bpmsuid']);
 $invid = intval($_GET['invoiceid']);
 
-$chk = mysqli_query($con, "SELECT DISTINCT BillingId FROM tblinvoice WHERE BillingId='$invid' AND Userid='$uid'");
-if (mysqli_num_rows($chk) == 0) {
+$chk = db_query("SELECT * FROM tblinvoice WHERE BillingId='$invid' AND Userid='$uid' LIMIT 1");
+if (db_num_rows($chk) == 0) {
     echo "<script>alert('Invalid invoice.'); window.location='my-invoices.php';</script>";
     exit;
 }
 
-$ret = mysqli_query($con, "SELECT DISTINCT tblinvoice.PostingDate, tblcustomers.Name, tblcustomers.Email, tblcustomers.MobileNumber, tblcustomers.Gender
-  FROM tblinvoice JOIN tblcustomers ON tblcustomers.ID=tblinvoice.Userid WHERE tblinvoice.BillingId='$invid' AND tblinvoice.Userid='$uid'");
-$row = mysqli_fetch_array($ret);
+$ret = db_query("SELECT tblinvoice.PostingDate, tblcustomers.Name, tblcustomers.Email, tblcustomers.MobileNumber, tblcustomers.Gender
+  FROM tblinvoice JOIN tblcustomers ON tblcustomers.ID=tblinvoice.Userid WHERE tblinvoice.BillingId='$invid' AND tblinvoice.Userid='$uid' LIMIT 1");
+$row = db_fetch_array($ret);
 
 include('includes/header.php');
 ?>
@@ -29,18 +29,18 @@ include('includes/header.php');
   </table>
   <h5 class="mt-4">Services</h5>
   <table class="table table-bordered table-salon">
-    <thead><tr><th>#</th><th>Service</th><th>Cost (₹)</th></tr></thead>
+    <thead><tr><th>#</th><th>Service</th><th>Cost (Rs.)</th></tr></thead>
     <tbody>
 <?php
 $total = 0;
 $cnt = 1;
-$items = mysqli_query($con, "SELECT tblservices.ServiceName, tblservices.Cost FROM tblinvoice JOIN tblservices ON tblservices.ID=tblinvoice.ServiceId WHERE tblinvoice.BillingId='$invid' AND tblinvoice.Userid='$uid'");
-while ($it = mysqli_fetch_array($items)) {
+$items = db_query("SELECT tblservices.ServiceName, tblservices.Cost FROM tblinvoice JOIN tblservices ON tblservices.ID=tblinvoice.ServiceId WHERE tblinvoice.BillingId='$invid' AND tblinvoice.Userid='$uid'");
+while ($it = db_fetch_array($items)) {
     $total += intval($it['Cost']);
 ?>
       <tr><td><?php echo $cnt++; ?></td><td><?php echo htmlspecialchars($it['ServiceName']); ?></td><td><?php echo intval($it['Cost']); ?></td></tr>
 <?php } ?>
-      <tr><th colspan="2" class="text-end">Grand Total</th><th>₹<?php echo $total; ?></th></tr>
+      <tr><th colspan="2" class="text-end">Grand Total</th><th>Rs. <?php echo $total; ?></th></tr>
     </tbody>
   </table>
 </div>

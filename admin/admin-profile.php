@@ -1,7 +1,7 @@
-<?php
+﻿<?php
 session_start();
 error_reporting(0);
-include('includes/dbconnection.php');
+include('includes/supabase_db.php');
 include_once('includes/auth_check.php');
 if(isset($_POST['submit']))
   {
@@ -9,7 +9,7 @@ if(isset($_POST['submit']))
     $aname=$_POST['adminname'];
   $mobno=$_POST['contactnumber'];
   
-     $query=mysqli_query($con, "update tbladmin set AdminName ='$aname', MobileNumber='$mobno' where ID='$adminid'");
+     $query=db_query( "update tbladmin set AdminName ='$aname', MobileNumber='$mobno' where ID='$adminid'");
     if ($query) {
    
     echo '<script>alert("Admin profile has been updated")</script>';
@@ -78,9 +78,9 @@ if(isset($_POST['submit']))
 
   <?php
 $adminid=$_SESSION['bpmsaid'];
-$ret=mysqli_query($con,"select * from tbladmin where ID='$adminid'");
+$ret=db_query("select * from tbladmin where ID='$adminid'");
 $cnt=1;
-while ($row=mysqli_fetch_array($ret)) {
+while ($row=db_fetch_array($ret)) {
 
 ?>
 							 <div class="form-group"> <label for="exampleInputEmail1">Admin Name</label> <input type="text" class="form-control" id="adminname" name="adminname" placeholder="Admin Name" value="<?php  echo $row['AdminName'];?>"> </div> <div class="form-group"> <label for="exampleInputPassword1">User Name</label> <input type="text" id="username" name="username" class="form-control" value="<?php  echo $row['UserName'];?>" readonly="true"> </div>
@@ -124,3 +124,4 @@ while ($row=mysqli_fetch_array($ret)) {
    <script src="js/bootstrap.js"> </script>
 </body>
 </html>
+

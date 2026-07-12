@@ -1,8 +1,8 @@
 <?php
 $uid = intval($_SESSION['bpmsuid']);
-$cn = mysqli_query($con, "SELECT Name FROM tblcustomers WHERE ID='$uid'");
-$crow = mysqli_fetch_array($cn);
-$cname = $crow ? $crow['Name'] : 'Client';
+$cn = db_query("SELECT * FROM tblcustomers WHERE ID='$uid' LIMIT 1");
+$crow = db_fetch_array($cn);
+$cname = $crow ? ($crow['Name'] ?? 'Client') : 'Client';
 $cur = basename($_SERVER['PHP_SELF']);
 ?>
 <!DOCTYPE html>

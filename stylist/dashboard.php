@@ -4,13 +4,13 @@ require_once __DIR__ . '/../includes/appointment_helpers.php';
 $pageTitle = 'Dashboard';
 $sid = intval($_SESSION['bpmsstid']);
 
-$sty = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM tblstylists WHERE ID='$sid'"));
+$sty = db_fetch_array(db_query("SELECT * FROM tblstylists WHERE ID='$sid' LIMIT 1"));
 $today = date('Y-m-d');
 
-$totalAssigned = mysqli_num_rows(mysqli_query($con, "SELECT ID FROM tblappointment WHERE StylistId='$sid'"));
-$pendingResponse = mysqli_num_rows(mysqli_query($con, "SELECT ID FROM tblappointment WHERE StylistId='$sid' AND (StylistStatus='' OR StylistStatus IS NULL) AND Status!='2'"));
-$todayCount = mysqli_num_rows(mysqli_query($con, "SELECT ID FROM tblappointment WHERE StylistId='$sid' AND AptDate='$today'"));
-$confirmed = mysqli_num_rows(mysqli_query($con, "SELECT ID FROM tblappointment WHERE StylistId='$sid' AND Status='1' AND StylistStatus='1'"));
+$totalAssigned = db_num_rows(db_query("SELECT * FROM tblappointment WHERE StylistId='$sid'"));
+$pendingResponse = db_num_rows(db_query("SELECT * FROM tblappointment WHERE StylistId='$sid' AND (StylistStatus='' OR StylistStatus IS NULL) AND Status!='2'"));
+$todayCount = db_num_rows(db_query("SELECT * FROM tblappointment WHERE StylistId='$sid' AND AptDate='$today'"));
+$confirmed = db_num_rows(db_query("SELECT * FROM tblappointment WHERE StylistId='$sid' AND Status='1' AND StylistStatus='1'"));
 
 include('includes/header.php');
 ?>
@@ -36,9 +36,9 @@ include('includes/header.php');
       <thead><tr><th>#</th><th>Client</th><th>Service</th><th>Date</th><th>Time</th><th>Overall</th><th></th></tr></thead>
       <tbody>
 <?php
-$ret = mysqli_query($con, "SELECT * FROM tblappointment WHERE StylistId='$sid' ORDER BY ID DESC LIMIT 8");
+$ret = db_query("SELECT * FROM tblappointment WHERE StylistId='$sid' ORDER BY ID DESC LIMIT 8");
 $cnt = 1;
-while ($row = mysqli_fetch_array($ret)) {
+while ($row = db_fetch_array($ret)) {
 ?>
         <tr>
           <td><?php echo $cnt++; ?></td>

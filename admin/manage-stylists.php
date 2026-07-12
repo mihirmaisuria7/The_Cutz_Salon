@@ -1,13 +1,13 @@
-<?php
+﻿<?php
 session_start();
 error_reporting(0);
-include('includes/dbconnection.php');
+include('includes/supabase_db.php');
 include_once('includes/auth_check.php');
 
 if (isset($_GET['del'])) {
     $id = intval($_GET['del']);
-    mysqli_query($con, "UPDATE tblappointment SET StylistId=NULL WHERE StylistId='$id'");
-    mysqli_query($con, "DELETE FROM tblstylists WHERE ID='$id'");
+    db_query( "UPDATE tblappointment SET StylistId=NULL WHERE StylistId='$id'");
+    db_query( "DELETE FROM tblstylists WHERE ID='$id'");
     echo "<script>alert('Stylist deleted.'); window.location='manage-stylists.php';</script>";
 }
 ?>
@@ -36,9 +36,9 @@ if (isset($_GET['del'])) {
 <thead><tr><th>#</th><th>Name</th><th>Username</th><th>Email</th><th>Mobile</th><th>Specialty</th><th>Joined</th><th>Action</th></tr></thead>
 <tbody>
 <?php
-$ret = mysqli_query($con, "SELECT * FROM tblstylists ORDER BY ID DESC");
+$ret = db_query( "SELECT * FROM tblstylists ORDER BY ID DESC");
 $cnt = 1;
-while ($row = mysqli_fetch_array($ret)) {
+while ($row = db_fetch_array($ret)) {
 ?>
 <tr>
 <td><?php echo $cnt++; ?></td>
@@ -69,3 +69,5 @@ if ($cnt === 1) {
 <script src="js/bootstrap.js"></script>
 </body>
 </html>
+
+

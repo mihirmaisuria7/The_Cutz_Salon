@@ -1,7 +1,7 @@
-<?php
+﻿<?php
 session_start();
 error_reporting(0);
-include('includes/dbconnection.php');
+include('includes/supabase_db.php');
 include_once('includes/auth_check.php');
 if(isset($_POST['submit']))
   {
@@ -10,7 +10,7 @@ if(isset($_POST['submit']))
    $des=$_POST['des'];
  $eid = intval($_GET['editid'] ?? 0);
      
-    $query=mysqli_query($con, "update  tblservices set ServiceName='$sername', Description='$des',Cost='$cost' where ID='$eid' ");
+    $query=db_query( "update  tblservices set ServiceName='$sername', Description='$des',Cost='$cost' where ID='$eid' ");
     if ($query) {
    
     echo '<script>alert("Service has been Updated")</script>';
@@ -78,9 +78,9 @@ if(isset($_POST['submit']))
 								
   <?php
  $cid = intval($_GET['editid'] ?? 0);
-$ret=mysqli_query($con,"select * from  tblservices where ID='$cid'");
+$ret=db_query("select * from  tblservices where ID='$cid'");
 $cnt=1;
-while ($row=mysqli_fetch_array($ret)) {
+while ($row=db_fetch_array($ret)) {
 
 ?> 
 
@@ -125,3 +125,4 @@ while ($row=mysqli_fetch_array($ret)) {
    <script src="js/bootstrap.js"> </script>
 </body>
 </html>
+

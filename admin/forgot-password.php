@@ -1,15 +1,15 @@
-<?php
+﻿<?php
 session_start();
 error_reporting(0);
-include('includes/dbconnection.php');
+include('includes/supabase_db.php');
 
 if(isset($_POST['submit']))
   {
     $contactno=$_POST['contactno'];
     $email=$_POST['email'];
 
-        $query=mysqli_query($con,"select ID from tbladmin where  Email='$email' and MobileNumber='$contactno' ");
-    $ret=mysqli_fetch_array($query);
+        $query=db_query("select ID from tbladmin where  Email='$email' and MobileNumber='$contactno' ");
+    $ret=db_fetch_array($query);
     if($ret>0){
       $_SESSION['contactno']=$contactno;
       $_SESSION['email']=$email;
@@ -118,3 +118,4 @@ if(isset($_POST['submit']))
    <script src="js/bootstrap.js"> </script>
 </body>
 </html>
+

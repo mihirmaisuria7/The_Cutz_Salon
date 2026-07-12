@@ -1,2 +1,3 @@
-<?php
-require_once __DIR__ . '/../../includes/dbconnection.php';
+﻿<?php
+require_once __DIR__ . '/../../includes/supabase_db.php';
+

@@ -1,7 +1,7 @@
-<?php
+﻿<?php
 session_start();
 error_reporting(0);
-include('includes/dbconnection.php');
+include('includes/supabase_db.php');
 include_once('includes/auth_check.php');
 $todysale = $yesterdaysale = $tseven = $totalsale = 0;
      ?>
@@ -62,8 +62,8 @@ $todysale = $yesterdaysale = $tseven = $totalsale = 0;
 				<div class="row calender widget-shadow">
 					<div class="row-one">
 					<div class="col-md-4 widget">
-						<?php $query1=mysqli_query($con,"Select * from tblcustomers");
-$totalcust=mysqli_num_rows($query1);
+						<?php $query1=db_query("Select * from tblcustomers");
+$totalcust=db_num_rows($query1);
 ?>
 						<div class="stats-left ">
 							<h5>Total</h5>
@@ -75,8 +75,8 @@ $totalcust=mysqli_num_rows($query1);
 						<div class="clearfix"> </div>	
 					</div>
 					<div class="col-md-4 widget states-mdl">
-						<?php $query2=mysqli_query($con,"Select * from tblappointment");
-$totalappointment=mysqli_num_rows($query2);
+						<?php $query2=db_query("Select * from tblappointment");
+$totalappointment=db_num_rows($query2);
 ?>
 						<div class="stats-left">
 							<h5>Total</h5>
@@ -88,8 +88,8 @@ $totalappointment=mysqli_num_rows($query2);
 						<div class="clearfix"> </div>	
 					</div>
 					<div class="col-md-4 widget states-last">
-						<?php $query3=mysqli_query($con,"Select * from tblappointment where Status='1'");
-$totalaccapt=mysqli_num_rows($query3);
+						<?php $query3=db_query("Select * from tblappointment where Status='1'");
+$totalaccapt=db_num_rows($query3);
 ?>
 						<div class="stats-left">
 							<h5>Total</h5>
@@ -108,8 +108,8 @@ $totalaccapt=mysqli_num_rows($query3);
 				<div class="row calender widget-shadow">
 					<div class="row-one">
 					<div class="col-md-4 widget">
-						<?php $query4=mysqli_query($con,"Select * from tblappointment where Status='2'");
-$totalrejapt=mysqli_num_rows($query4);
+						<?php $query4=db_query("Select * from tblappointment where Status='2'");
+$totalrejapt=db_num_rows($query4);
 ?>
 						<div class="stats-left ">
 							<h5>Total</h5>
@@ -121,8 +121,8 @@ $totalrejapt=mysqli_num_rows($query4);
 						<div class="clearfix"> </div>	
 					</div>
 					<div class="col-md-4 widget states-mdl">
-						<?php $query5=mysqli_query($con,"Select * from  tblservices");
-$totalser=mysqli_num_rows($query5);
+						<?php $query5=db_query("Select * from  tblservices");
+$totalser=db_num_rows($query5);
 ?>
 						<div class="stats-left">
 							<h5>Total</h5>
@@ -136,10 +136,10 @@ $totalser=mysqli_num_rows($query5);
 					<div class="col-md-4 widget states-last">
 						<?php
 //todays sale
- $query6=mysqli_query($con,"select tblinvoice.ServiceId as ServiceId, tblservices.Cost
+ $query6=db_query("select tblinvoice.ServiceId as ServiceId, tblservices.Cost
  from tblinvoice 
   join tblservices  on tblservices.ID=tblinvoice.ServiceId where date(PostingDate)=CURDATE();");
-while($row=mysqli_fetch_array($query6))
+while($row=db_fetch_array($query6))
 {
 $todays_sale=$row['Cost'];
 $todysale+=$todays_sale;
@@ -165,10 +165,10 @@ $todysale+=$todays_sale;
 					<div class="col-md-4 widget">
 						<?php
 //Yesterday's sale
- $query7=mysqli_query($con,"select tblinvoice.ServiceId as ServiceId, tblservices.Cost
+ $query7=db_query("select tblinvoice.ServiceId as ServiceId, tblservices.Cost
  from tblinvoice 
   join tblservices  on tblservices.ID=tblinvoice.ServiceId where date(PostingDate)=CURDATE()-1;");
-while($row7=mysqli_fetch_array($query7))
+while($row7=db_fetch_array($query7))
 {
 $yesterdays_sale=$row7['Cost'];
 $yesterdaysale+=$yesterdays_sale;
@@ -189,10 +189,10 @@ $yesterdaysale+=$yesterdays_sale;
 					<div class="col-md-4 widget states-mdl">
 						<?php
 //Last Sevendays Sale
- $query8=mysqli_query($con,"select tblinvoice.ServiceId as ServiceId, tblservices.Cost
+ $query8=db_query("select tblinvoice.ServiceId as ServiceId, tblservices.Cost
  from tblinvoice 
   join tblservices  on tblservices.ID=tblinvoice.ServiceId where date(PostingDate)>=(DATE(NOW()) - INTERVAL 7 DAY);");
-while($row8=mysqli_fetch_array($query8))
+while($row8=db_fetch_array($query8))
 {
 $sevendays_sale=$row8['Cost'];
 $tseven+=$sevendays_sale;
@@ -215,10 +215,10 @@ $tseven+=$sevendays_sale;
 					<div class="col-md-4 widget states-last">
 						<?php
 //Total Sale
- $query9=mysqli_query($con,"select tblinvoice.ServiceId as ServiceId, tblservices.Cost
+ $query9=db_query("select tblinvoice.ServiceId as ServiceId, tblservices.Cost
  from tblinvoice 
   join tblservices  on tblservices.ID=tblinvoice.ServiceId");
-while($row9=mysqli_fetch_array($query9))
+while($row9=db_fetch_array($query9))
 {
 $total_sale=$row9['Cost'];
 $totalsale+=$total_sale;
@@ -279,3 +279,4 @@ $totalsale+=$total_sale;
    <script src="js/bootstrap.js"> </script>
 </body>
 </html>
+

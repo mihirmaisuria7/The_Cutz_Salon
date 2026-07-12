@@ -1,24 +1,24 @@
 <?php
 session_start();
 error_reporting(0);
-include('includes/dbconnection.php');
+include('includes/supabase_db.php');
 include_once('includes/auth_check.php');
 require_once __DIR__ . '/../includes/appointment_helpers.php';
 if (isset($_POST['submit'])) {
-    $name = mysqli_real_escape_string($con, $_POST['name']);
-    $username = mysqli_real_escape_string($con, $_POST['username']);
-    $email = mysqli_real_escape_string($con, $_POST['email']);
-    $mobilenum = mysqli_real_escape_string($con, $_POST['mobilenum']);
-    $specialty = mysqli_real_escape_string($con, $_POST['specialty']);
+    $name = db_real_escape_string( $_POST['name']);
+    $username = db_real_escape_string( $_POST['username']);
+    $email = db_real_escape_string( $_POST['email']);
+    $mobilenum = db_real_escape_string( $_POST['mobilenum']);
+    $specialty = db_real_escape_string( $_POST['specialty']);
     $password = md5($_POST['password']);
-    $query = mysqli_query($con, "INSERT INTO tblstylists(StylistName,UserName,Email,MobileNumber,Specialty,Password) VALUES('$name','$username','$email','$mobilenum','$specialty','$password')");
+    $query = db_query( "INSERT INTO tblstylists(StylistName,UserName,Email,MobileNumber,Specialty,Password) VALUES('$name','$username','$email','$mobilenum','$specialty','$password')");
     if ($query) {
-        $newId = mysqli_insert_id($con);
+        $newId = db_insert_id();
         if ($newId && msms_has_table($con, 'tblstylist_services') && !empty($_POST['service_ids'])) {
             foreach ($_POST['service_ids'] as $svcId) {
                 $svcId = intval($svcId);
                 if ($svcId > 0) {
-                    mysqli_query($con, "INSERT IGNORE INTO tblstylist_services(StylistId, ServiceId) VALUES('$newId','$svcId')");
+                    db_query( "INSERT IGNORE INTO tblstylist_services(StylistId, ServiceId) VALUES('$newId','$svcId')");
                 }
             }
         }
@@ -28,7 +28,7 @@ if (isset($_POST['submit'])) {
         echo "<script>alert('Something Went Wrong. Please try again.');</script>";
     }
 }
-$allServices = mysqli_query($con, "SELECT ID, ServiceName, Cost FROM tblservices ORDER BY ServiceName");
+$allServices = db_query( "SELECT ID, ServiceName, Cost FROM tblservices ORDER BY ServiceName");
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -66,9 +66,9 @@ $allServices = mysqli_query($con, "SELECT ID, ServiceName, Cost FROM tblservices
 <div class="form-group"><label>Specialty</label><input type="text" class="form-control" name="specialty" placeholder="e.g. Hair styling"></div>
 <div class="form-group"><label>Password</label><input type="password" class="form-control" name="password" minlength="6" required></div>
 <div class="form-group"><label>Expert services (shown to clients)</label>
-<?php while ($srv = mysqli_fetch_array($allServices)) {
+<?php while ($srv = db_fetch_array($allServices)) {
     echo '<div class="checkbox"><label><input type="checkbox" name="service_ids[]" value="'.intval($srv['ID']).'"> '
-        . htmlspecialchars($srv['ServiceName']) . ' — ₹' . intval($srv['Cost']) . '</label></div>';
+        . htmlspecialchars($srv['ServiceName']) . ' - Rs. ' . intval($srv['Cost']) . '</label></div>';
 } ?>
 </div>
 <button type="submit" name="submit" class="btn btn-default">Add Stylist</button>
@@ -101,3 +101,5 @@ if (button !== 'showLeftPush') { classie.toggle(showLeftPush, 'disabled'); }
 <script src="js/bootstrap.js"></script>
 </body>
 </html>
+
+

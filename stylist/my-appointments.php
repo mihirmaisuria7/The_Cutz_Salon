@@ -27,9 +27,9 @@ include('includes/header.php');
       </thead>
       <tbody>
 <?php
-$ret = mysqli_query($con, "SELECT * FROM tblappointment WHERE StylistId='$sid' ORDER BY ID DESC");
+$ret = db_query("SELECT * FROM tblappointment WHERE StylistId='$sid' ORDER BY ID DESC");
 $cnt = 1;
-while ($row = mysqli_fetch_array($ret)) {
+while ($row = db_fetch_array($ret)) {
     $ss = $row['StylistStatus'] ?? '';
 ?>
         <tr>

@@ -1,7 +1,7 @@
-<?php
+﻿<?php
 session_start();
 error_reporting(0);
-include('includes/dbconnection.php');
+include('includes/supabase_db.php');
 include_once('includes/auth_check.php');
 if(isset($_POST['submit']))
   {
@@ -12,7 +12,7 @@ if(isset($_POST['submit']))
 $details=$_POST['details'];
  
      
-    $query=mysqli_query($con, "insert into  tblcustomers(Name,Email,MobileNumber,Gender,Details) value('$name','$email','$mobilenum','$gender','$details')");
+    $query=db_query( "insert into  tblcustomers(Name,Email,MobileNumber,Gender,Details) value('$name','$email','$mobilenum','$gender','$details')");
     if ($query) {
 echo "<script>alert('Customer has been added.');</script>"; 
 echo "<script>window.location.href = 'add-customer.php'</script>"; 
@@ -131,3 +131,4 @@ echo "<script>alert('Something Went Wrong. Please try again.');</script>";
    <script src="js/bootstrap.js"> </script>
 </body>
 </html>
+

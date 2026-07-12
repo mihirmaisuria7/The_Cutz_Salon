@@ -10,7 +10,7 @@ if ($aid <= 0) {
     exit;
 }
 
-$row = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM tblappointment WHERE ID='$aid' AND StylistId='$sid'"));
+$row = db_fetch_array(db_query("SELECT * FROM tblappointment WHERE ID='$aid' AND StylistId='$sid' LIMIT 1"));
 if (!$row) {
     echo "<script>alert('Appointment not found or not requested for you.'); window.location='my-appointments.php';</script>";
     exit;
@@ -18,11 +18,11 @@ if (!$row) {
 
 if (isset($_POST['accept_request']) || isset($_POST['reject_request'])) {
     $response = isset($_POST['accept_request']) ? '1' : '2';
-    $note = mysqli_real_escape_string($con, $_POST['response_note'] ?? '');
+    $note = db_real_escape_string($_POST['response_note'] ?? '');
     if (msms_has_column($con, 'tblappointment', 'StylistStatus')) {
-        mysqli_query($con, "UPDATE tblappointment SET StylistStatus='$response', StylistRemark='$note' WHERE ID='$aid' AND StylistId='$sid'");
+        db_query("UPDATE tblappointment SET StylistStatus='$response', StylistRemark='$note' WHERE ID='$aid' AND StylistId='$sid'");
     } else {
-        mysqli_query($con, "UPDATE tblappointment SET StylistRemark='$note' WHERE ID='$aid' AND StylistId='$sid'");
+        db_query("UPDATE tblappointment SET StylistRemark='$note' WHERE ID='$aid' AND StylistId='$sid'");
     }
     $msg = $response === '1' ? 'Request accepted.' : 'Request rejected.';
     echo "<script>alert('$msg'); window.location='view-appointment.php?id=$aid';</script>";
@@ -30,13 +30,13 @@ if (isset($_POST['accept_request']) || isset($_POST['reject_request'])) {
 }
 
 if (isset($_POST['save_note'])) {
-    $note = mysqli_real_escape_string($con, $_POST['stylist_remark']);
-    mysqli_query($con, "UPDATE tblappointment SET StylistRemark='$note' WHERE ID='$aid' AND StylistId='$sid'");
+    $note = db_real_escape_string($_POST['stylist_remark'] ?? '');
+    db_query("UPDATE tblappointment SET StylistRemark='$note' WHERE ID='$aid' AND StylistId='$sid'");
     echo "<script>alert('Service note saved.'); window.location='view-appointment.php?id=$aid';</script>";
     exit;
 }
 
-$row = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM tblappointment WHERE ID='$aid'"));
+$row = db_fetch_array(db_query("SELECT * FROM tblappointment WHERE ID='$aid' LIMIT 1"));
 $canRespond = msms_stylist_can_respond($row, $sid);
 $ss = $row['StylistStatus'] ?? '';
 

@@ -1,7 +1,7 @@
-<?php
+﻿<?php
 session_start();
 error_reporting(0);
-include('includes/dbconnection.php');
+include('includes/supabase_db.php');
 include_once('includes/auth_check.php');
 ?>
 <!DOCTYPE HTML>
@@ -78,11 +78,11 @@ $sdata=$_POST['searchdata'];
 
 						<table class="table table-bordered"> <thead> <tr> <th>#</th> <th> Appointment Number</th> <th>Name</th><th>Mobile Number</th> <th>Appointment Date</th><th>Appointment Time</th><th>Action</th> </tr> </thead> <tbody>
 <?php
-$ret=mysqli_query($con,"select *from  tblappointment where AptNumber like '%$sdata%' || Name like '%$sdata%' || PhoneNumber like '%$sdata%'");
-$num=mysqli_num_rows($ret);
+$ret=db_query("select *from  tblappointment where AptNumber like '%$sdata%' || Name like '%$sdata%' || PhoneNumber like '%$sdata%'");
+$num=db_num_rows($ret);
 if($num>0){
 $cnt=1;
-while ($row=mysqli_fetch_array($ret)) {
+while ($row=db_fetch_array($ret)) {
 
 ?>
 
@@ -131,3 +131,4 @@ $cnt=$cnt+1;
 	<script src="js/bootstrap.js"> </script>
 </body>
 </html>
+

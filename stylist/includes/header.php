@@ -1,8 +1,8 @@
 <?php
 $sid = intval($_SESSION['bpmsstid']);
-$sn = mysqli_query($con, "SELECT StylistName FROM tblstylists WHERE ID='$sid'");
-$srow = mysqli_fetch_array($sn);
-$sname = $srow ? $srow['StylistName'] : 'Stylist';
+$sn = db_query("SELECT * FROM tblstylists WHERE ID='$sid' LIMIT 1");
+$srow = db_fetch_array($sn);
+$sname = $srow ? ($srow['StylistName'] ?? 'Stylist') : 'Stylist';
 $cur = basename($_SERVER['PHP_SELF']);
 ?>
 <!DOCTYPE html>

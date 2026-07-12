@@ -11,9 +11,9 @@ include('includes/header.php');
 </div>
 <div class="row g-4">
 <?php
-$stylists = mysqli_query($con, "SELECT * FROM tblstylists ORDER BY StylistName");
-if ($stylists && mysqli_num_rows($stylists) > 0) {
-    while ($sty = mysqli_fetch_array($stylists)) {
+$stylists = db_query("SELECT * FROM tblstylists ORDER BY StylistName");
+if ($stylists && db_num_rows($stylists) > 0) {
+    while ($sty = db_fetch_array($stylists)) {
         $services = msms_services_for_stylist($con, $sty['ID']);
 ?>
   <div class="col-md-6 col-lg-4">
@@ -29,7 +29,7 @@ if ($stylists && mysqli_num_rows($stylists) > 0) {
       <p class="small fw-semibold mb-1">Expert in:</p>
       <ul class="small mb-3 ps-3">
         <?php foreach ($services as $sv) { ?>
-        <li><?php echo htmlspecialchars($sv['ServiceName']); ?> <span class="text-success">₹<?php echo intval($sv['Cost']); ?></span></li>
+        <li><?php echo htmlspecialchars($sv['ServiceName']); ?> <span class="text-success">Rs. <?php echo intval($sv['Cost']); ?></span></li>
         <?php } ?>
       </ul>
       <?php } else { ?>

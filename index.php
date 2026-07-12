@@ -1,9 +1,10 @@
 <?php
 session_start();
-error_reporting(0);
-include('includes/dbconnection.php');
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+include('includes/supabase_db.php');
 
-// Already logged in — redirect by role
+// Already logged in â€” redirect by role
 if (!empty($_SESSION['bpmsaid'])) {
     header('location:admin/dashboard.php');
     exit;
@@ -19,21 +20,19 @@ if (!empty($_SESSION['bpmsstid'])) {
 
 $loginError = '';
 if (isset($_POST['login'])) {
-    $user = mysqli_real_escape_string($con, $_POST['username']);
-    $pass = md5($_POST['password']);
+    $user = db_real_escape_string($_POST['username'] ?? '');
+    $pass = md5($_POST['password'] ?? '');
 
-    // Admin login (same as admin panel)
-    $adminQ = mysqli_query($con, "SELECT ID FROM tbladmin WHERE UserName='$user' AND Password='$pass'");
-    $admin = mysqli_fetch_array($adminQ);
+    $adminQ = db_query("SELECT * FROM tbladmin WHERE UserName='$user' AND Password='$pass' LIMIT 1");
+    $admin = db_fetch_array($adminQ);
     if ($admin) {
         $_SESSION['bpmsaid'] = $admin['ID'];
         header('location:admin/dashboard.php');
         exit;
     }
 
-    // Client login
-    $clientQ = mysqli_query($con, "SELECT ID, UserName FROM tblcustomers WHERE UserName='$user' AND Password='$pass'");
-    $client = mysqli_fetch_array($clientQ);
+    $clientQ = db_query("SELECT * FROM tblcustomers WHERE UserName='$user' AND Password='$pass' LIMIT 1");
+    $client = db_fetch_array($clientQ);
     if ($client) {
         $_SESSION['bpmsuid'] = $client['ID'];
         $_SESSION['bpmsuname'] = $client['UserName'];
@@ -41,23 +40,20 @@ if (isset($_POST['login'])) {
         exit;
     }
 
-    // Stylist login
-    $stylistQ = mysqli_query($con, "SELECT ID, UserName FROM tblstylists WHERE UserName='$user' AND Password='$pass'");
-    if ($stylistQ) {
-        $stylist = mysqli_fetch_array($stylistQ);
-        if ($stylist) {
-            $_SESSION['bpmsstid'] = $stylist['ID'];
-            $_SESSION['bpmsstname'] = $stylist['UserName'];
-            header('location:stylist/dashboard.php');
-            exit;
-        }
+    $stylistQ = db_query("SELECT * FROM tblstylists WHERE UserName='$user' AND Password='$pass' LIMIT 1");
+    $stylist = db_fetch_array($stylistQ);
+    if ($stylist) {
+        $_SESSION['bpmsstid'] = $stylist['ID'];
+        $_SESSION['bpmsstname'] = $stylist['UserName'];
+        header('location:stylist/dashboard.php');
+        exit;
     }
 
     $loginError = 'Invalid username or password.';
 }
 
-$about = mysqli_fetch_array(mysqli_query($con, "SELECT PageDescription FROM tblpage WHERE PageType='aboutus'"));
-$contact = mysqli_fetch_array(mysqli_query($con, "SELECT PageDescription, Email, MobileNumber, Timing FROM tblpage WHERE PageType='contactus'"));
+$about = db_fetch_array(db_query("SELECT * FROM tblpage WHERE PageType='aboutus' LIMIT 1"));
+$contact = db_fetch_array(db_query("SELECT * FROM tblpage WHERE PageType='contactus' LIMIT 1"));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -108,14 +104,14 @@ footer { background:#2c2416; color:#ccc; padding:2rem 0; }
     <div class="row align-items-center">
       <div class="col-lg-7">
         <h1>Beauty &amp; Style,<br>Booked Your Way</h1>
-        <p class="lead mb-4">Salon Management System — clients book online, stylists manage assigned appointments, admins run the salon.</p>
+        <p class="lead mb-4">Salon Management System - clients book online, stylists manage assigned appointments, admins run the salon.</p>
         <a href="#login" class="btn btn-gold btn-lg me-2">Sign In</a>
         <a href="client/register.php" class="btn btn-outline-light btn-lg">New Client? Register</a>
       </div>
       <div class="col-lg-5 mt-4 mt-lg-0" id="login">
         <div class="login-box">
           <h4 class="mb-1 text-dark">Unified Login</h4>
-          <p class="text-muted small mb-3">Admin, client, or stylist — same page, automatic redirect to your dashboard.</p>
+          <p class="text-muted small mb-3">Admin, client, or stylist - same page, automatic redirect to your dashboard.</p>
           <?php if ($loginError) { ?><div class="alert alert-danger py-2"><?php echo htmlspecialchars($loginError); ?></div><?php } ?>
           <form method="post">
             <div class="mb-3">
@@ -130,7 +126,7 @@ footer { background:#2c2416; color:#ccc; padding:2rem 0; }
           </form>
           <hr>
           <p class="small text-muted mb-0 text-center">
-            Admin → Admin Panel &nbsp;|&nbsp; Client → Client Dashboard &nbsp;|&nbsp; Stylist → Stylist Panel<br>
+            Admin -> Admin Panel &nbsp;|&nbsp; Client -> Client Dashboard &nbsp;|&nbsp; Stylist -> Stylist Panel<br>
             <a href="client/register.php">Create client account</a>
           </p>
         </div>
@@ -144,14 +140,14 @@ footer { background:#2c2416; color:#ccc; padding:2rem 0; }
     <h2 class="text-center mb-5">Our Services</h2>
     <div class="row g-4">
 <?php
-$sv = mysqli_query($con, "SELECT ServiceName, Description, Cost FROM tblservices ORDER BY ID LIMIT 6");
-while ($s = mysqli_fetch_array($sv)) {
+$sv = db_query("SELECT ServiceName, Description, Cost FROM tblservices ORDER BY ID LIMIT 6");
+while ($s = db_fetch_array($sv)) {
 ?>
       <div class="col-md-6 col-lg-4">
         <div class="service-card bg-white">
           <h5 style="color:var(--primary-dark)"><?php echo htmlspecialchars($s['ServiceName']); ?></h5>
           <p class="small text-muted"><?php echo htmlspecialchars(substr($s['Description'], 0, 100)); ?>...</p>
-          <strong class="text-success">₹<?php echo intval($s['Cost']); ?></strong>
+          <strong class="text-success">Rs. <?php echo intval($s['Cost']); ?></strong>
         </div>
       </div>
 <?php } ?>
@@ -195,3 +191,4 @@ while ($s = mysqli_fetch_array($sv)) {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

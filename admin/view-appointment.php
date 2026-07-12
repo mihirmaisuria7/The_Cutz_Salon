@@ -1,19 +1,19 @@
-<?php
+﻿<?php
 session_start();
 error_reporting(0);
-include('includes/dbconnection.php');
+include('includes/supabase_db.php');
 include_once('includes/auth_check.php');
 require_once __DIR__ . '/../includes/appointment_helpers.php';
 if(isset($_POST['submit']))
   {
     
     $cid = intval($_GET['viewid'] ?? 0);
-      $remark=mysqli_real_escape_string($con, $_POST['remark']);
-      $status=mysqli_real_escape_string($con, $_POST['status']);
+      $remark=db_real_escape_string( $_POST['remark']);
+      $status=db_real_escape_string( $_POST['status']);
      
     
      
-   $query=mysqli_query($con, "update  tblappointment set Remark='$remark',Status='$status' where ID='$cid'");
+   $query=db_query( "update  tblappointment set Remark='$remark',Status='$status' where ID='$cid'");
     if ($query) {
     
     echo '<script>alert("All remark has been updated")</script>';
@@ -30,10 +30,10 @@ if (isset($_POST['assign_stylist'])) {
     $cid = intval($_GET['viewid'] ?? 0);
     $stylistId = intval($_POST['stylist_id']);
     if ($stylistId > 0) {
-        mysqli_query($con, "UPDATE tblappointment SET StylistId='$stylistId' WHERE ID='$cid'");
+        db_query( "UPDATE tblappointment SET StylistId='$stylistId' WHERE ID='$cid'");
         echo '<script>alert("Stylist assigned successfully.")</script>';
     } else {
-        mysqli_query($con, "UPDATE tblappointment SET StylistId=NULL WHERE ID='$cid'");
+        db_query( "UPDATE tblappointment SET StylistId=NULL WHERE ID='$cid'");
         echo '<script>alert("Stylist assignment cleared.")</script>';
     }
 }
@@ -96,9 +96,9 @@ if (isset($_POST['assign_stylist'])) {
 						<h4>View Appointment:</h4>
 						<?php
 $cid = intval($_GET['viewid'] ?? 0);
-$ret=mysqli_query($con,"select * from tblappointment where ID='$cid'");
+$ret=db_query("select * from tblappointment where ID='$cid'");
 $cnt=1;
-while ($row=mysqli_fetch_array($ret)) {
+while ($row=db_fetch_array($ret)) {
 
 ?>
 						<table class="table table-bordered">
@@ -155,10 +155,10 @@ if($row['Status']=="2")
      ;?></td>
   </tr>
 <?php
-$assignedName = '—';
+$assignedName = 'â€”';
 if (!empty($row['StylistId'])) {
     $sid = intval($row['StylistId']);
-    $stRow = mysqli_fetch_array(mysqli_query($con, "SELECT StylistName FROM tblstylists WHERE ID='$sid'"));
+    $stRow = db_fetch_array(db_query( "SELECT StylistName FROM tblstylists WHERE ID='$sid'"));
     if ($stRow) { $assignedName = $stRow['StylistName']; }
 }
 ?>
@@ -168,7 +168,7 @@ if (!empty($row['StylistId'])) {
   </tr>
   <tr>
     <th>Stylist response</th>
-    <td><?php echo !empty($row['StylistId']) ? msms_apt_stylist_status_text($row['StylistStatus'] ?? '') : '—'; ?></td>
+    <td><?php echo !empty($row['StylistId']) ? msms_apt_stylist_status_text($row['StylistStatus'] ?? '') : 'â€”'; ?></td>
   </tr>
   <tr>
     <th>Overall booking</th>
@@ -186,10 +186,10 @@ if (!empty($row['StylistId'])) {
 						<p class="text-muted small">Client already chose a stylist when booking. Override only if needed.</p>
 						<form method="post">
 						<select name="stylist_id" class="form-control wd-450" style="max-width:320px;display:inline-block;">
-						<option value="0">— None —</option>
+						<option value="0">â€” None â€”</option>
 <?php
-$stylists = mysqli_query($con, "SELECT ID, StylistName FROM tblstylists ORDER BY StylistName");
-while ($st = mysqli_fetch_array($stylists)) {
+$stylists = db_query( "SELECT ID, StylistName FROM tblstylists ORDER BY StylistName");
+while ($st = db_fetch_array($stylists)) {
     $sel = (intval($row['StylistId']) === intval($st['ID'])) ? 'selected' : '';
     echo '<option value="'.intval($st['ID']).'" '.$sel.'>'.htmlspecialchars($st['StylistName']).'</option>';
 }
@@ -275,3 +275,4 @@ while ($st = mysqli_fetch_array($stylists)) {
 	<script src="js/bootstrap.js"> </script>
 </body>
 </html>
+

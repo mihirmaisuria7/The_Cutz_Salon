@@ -1,7 +1,7 @@
-<?php
+﻿<?php
 session_start();
 error_reporting(0);
-include('includes/dbconnection.php');
+include('includes/supabase_db.php');
 include_once('includes/auth_check.php');
 ?>
 <!DOCTYPE HTML>
@@ -53,12 +53,12 @@ include_once('includes/auth_check.php');
 					
 	<?php
 	$invid = intval($_GET['invoiceid'] ?? 0);
-$ret=mysqli_query($con,"select DISTINCT  tblinvoice.PostingDate,tblcustomers.Name,tblcustomers.Email,tblcustomers.MobileNumber,tblcustomers.Gender
+$ret=db_query("select DISTINCT  tblinvoice.PostingDate,tblcustomers.Name,tblcustomers.Email,tblcustomers.MobileNumber,tblcustomers.Gender
 	from  tblinvoice 
 	join tblcustomers on tblcustomers.ID=tblinvoice.Userid 
 	where tblinvoice.BillingId='$invid'");
 $cnt=1;
-while ($row=mysqli_fetch_array($ret)) {
+while ($row=db_fetch_array($ret)) {
 
 ?>				
 				
@@ -95,12 +95,12 @@ while ($row=mysqli_fetch_array($ret)) {
 </tr>
 
 <?php
-$ret=mysqli_query($con,"select tblservices.ServiceName,tblservices.Cost  
+$ret=db_query("select tblservices.ServiceName,tblservices.Cost  
 	from  tblinvoice 
 	join tblservices on tblservices.ID=tblinvoice.ServiceId 
 	where tblinvoice.BillingId='$invid'");
 $cnt=1;
-while ($row=mysqli_fetch_array($ret)) {
+while ($row=db_fetch_array($ret)) {
 	?>
 
 <tr>
@@ -170,3 +170,4 @@ WinPrint.close();
 </script>
 </body>
 </html>
+

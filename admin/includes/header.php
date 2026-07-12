@@ -1,4 +1,4 @@
-<div class="sticky-header header-section ">
+﻿<div class="sticky-header header-section ">
       <div class="header-left">
         <!--toggle button start-->
         <button id="showLeftPush"><i class="fa fa-bars"></i></button>
@@ -19,8 +19,8 @@
         <div class="profile_details_left"><!--notifications of menu start -->
           <ul class="nofitications-dropdown">
             <?php
-$ret1=mysqli_query($con,"select ID,Name from  tblappointment where Status=''");
-$num=mysqli_num_rows($ret1);
+$ret1=db_query("select ID,Name from  tblappointment where Status=''");
+$num=db_num_rows($ret1);
 
 ?>  
             <li class="dropdown head-dpdn">
@@ -36,7 +36,7 @@ $num=mysqli_num_rows($ret1);
             
                    <div class="notification_desc">
                      <?php if($num>0){
-while($result=mysqli_fetch_array($ret1))
+while($result=db_fetch_array($ret1))
 {
             ?>
                  <a class="dropdown-item" href="view-appointment.php?viewid=<?php echo $result['ID'];?>">New appointment received from <?php echo $result['Name'];?> </a><br />
@@ -66,8 +66,8 @@ while($result=mysqli_fetch_array($ret1))
 $adid = (int) ($_SESSION['bpmsaid'] ?? 0);
 $name = 'Administrator';
 if ($adid > 0) {
-    $ret = mysqli_query($con, "SELECT AdminName FROM tbladmin WHERE ID='$adid' LIMIT 1");
-    if ($ret && ($row = mysqli_fetch_array($ret))) {
+    $ret = db_query( "SELECT AdminName FROM tbladmin WHERE ID='$adid' LIMIT 1");
+    if ($ret && ($row = db_fetch_array($ret))) {
         $name = $row['AdminName'];
     }
 }

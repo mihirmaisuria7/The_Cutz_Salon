@@ -1,11 +1,11 @@
-<?php
+﻿<?php
 include('includes/auth.php');
 require_once __DIR__ . '/../includes/appointment_helpers.php';
 $pageTitle = 'My Appointments';
 $uid = intval($_SESSION['bpmsuid']);
-$cust = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM tblcustomers WHERE ID='$uid'"));
-$email = mysqli_real_escape_string($con, $cust['Email']);
-$phone = $cust['MobileNumber'];
+$cust = db_fetch_array(db_query("SELECT * FROM tblcustomers WHERE ID='$uid' LIMIT 1"));
+$email = db_real_escape_string($cust['Email'] ?? '');
+$phone = $cust['MobileNumber'] ?? '';
 
 include('includes/header.php');
 ?>
@@ -29,9 +29,9 @@ include('includes/header.php');
       </thead>
       <tbody>
 <?php
-$ret = mysqli_query($con, "SELECT * FROM tblappointment WHERE Email='$email' OR PhoneNumber='$phone' ORDER BY ID DESC");
+$ret = db_query( "SELECT * FROM tblappointment WHERE Email='$email' OR PhoneNumber='$phone' ORDER BY ID DESC");
 $cnt = 1;
-while ($row = mysqli_fetch_array($ret)) {
+while ($row = db_fetch_array($ret)) {
     $styName = msms_stylist_name($con, $row['StylistId'] ?? 0);
     $hasStylist = !empty($row['StylistId']);
     $ss = $row['StylistStatus'] ?? '';
@@ -44,7 +44,7 @@ while ($row = mysqli_fetch_array($ret)) {
           <td><?php echo htmlspecialchars($row['AptDate']); ?></td>
           <td><?php echo htmlspecialchars($row['AptTime']); ?></td>
           <td><?php echo msms_apt_admin_badge_html($row['Status'] ?? ''); ?></td>
-          <td><?php echo $hasStylist ? msms_apt_stylist_badge_html($ss) : '<span class="text-muted">—</span>'; ?></td>
+          <td><?php echo $hasStylist ? msms_apt_stylist_badge_html($ss) : '<span class="text-muted">â€”</span>'; ?></td>
           <td><?php echo msms_apt_overall_badge_html($row); ?></td>
         </tr>
 <?php }
@@ -58,3 +58,4 @@ if ($cnt === 1) {
   <a href="book-appointment.php" class="btn btn-salon">Book New</a>
 </div>
 <?php include('includes/footer.php'); ?>
+

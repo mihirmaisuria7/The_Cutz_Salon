@@ -1,12 +1,12 @@
 <?php
 session_start();
 error_reporting(0);
-include('includes/dbconnection.php');
+include('includes/supabase_db.php');
 include_once('includes/auth_check.php');
 require_once __DIR__ . '/../includes/appointment_helpers.php';
 
 $stylistId = intval($_GET['id'] ?? 0);
-$sty = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM tblstylists WHERE ID='$stylistId'"));
+$sty = db_fetch_array(db_query( "SELECT * FROM tblstylists WHERE ID='$stylistId'"));
 if (!$sty) {
     echo "<script>alert('Stylist not found.'); window.location='manage-stylists.php';</script>";
     exit;
@@ -14,12 +14,12 @@ if (!$sty) {
 
 if (isset($_POST['save_services'])) {
     if (msms_has_table($con, 'tblstylist_services')) {
-        mysqli_query($con, "DELETE FROM tblstylist_services WHERE StylistId='$stylistId'");
+        db_query( "DELETE FROM tblstylist_services WHERE StylistId='$stylistId'");
         if (!empty($_POST['service_ids']) && is_array($_POST['service_ids'])) {
             foreach ($_POST['service_ids'] as $svcId) {
                 $svcId = intval($svcId);
                 if ($svcId > 0) {
-                    mysqli_query($con, "INSERT IGNORE INTO tblstylist_services(StylistId, ServiceId) VALUES('$stylistId','$svcId')");
+                    db_query( "INSERT IGNORE INTO tblstylist_services(StylistId, ServiceId) VALUES('$stylistId','$svcId')");
                 }
             }
         }
@@ -31,8 +31,8 @@ if (isset($_POST['save_services'])) {
 
 $selected = [];
 if (msms_has_table($con, 'tblstylist_services')) {
-    $selQ = mysqli_query($con, "SELECT ServiceId FROM tblstylist_services WHERE StylistId='$stylistId'");
-    while ($s = mysqli_fetch_array($selQ)) {
+    $selQ = db_query( "SELECT ServiceId FROM tblstylist_services WHERE StylistId='$stylistId'");
+    while ($s = db_fetch_array($selQ)) {
         $selected[] = intval($s['ServiceId']);
     }
 }
@@ -59,11 +59,11 @@ if (msms_has_table($con, 'tblstylist_services')) {
 <div class="form-body">
 <form method="post">
 <?php
-$services = mysqli_query($con, "SELECT ID, ServiceName, Cost FROM tblservices ORDER BY ServiceName");
-while ($srv = mysqli_fetch_array($services)) {
+$services = db_query( "SELECT ID, ServiceName, Cost FROM tblservices ORDER BY ServiceName");
+while ($srv = db_fetch_array($services)) {
     $chk = in_array(intval($srv['ID']), $selected, true) ? 'checked' : '';
     echo '<div class="checkbox"><label><input type="checkbox" name="service_ids[]" value="'.intval($srv['ID']).'" '.$chk.'> '
-        . htmlspecialchars($srv['ServiceName']) . ' — ₹' . intval($srv['Cost']) . '</label></div>';
+        . htmlspecialchars($srv['ServiceName']) . ' - Rs. ' . intval($srv['Cost']) . '</label></div>';
 }
 ?>
 <br>
@@ -80,3 +80,5 @@ while ($srv = mysqli_fetch_array($services)) {
 <script src="js/bootstrap.js"></script>
 </body>
 </html>
+
+
