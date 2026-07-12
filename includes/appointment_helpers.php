@@ -15,17 +15,30 @@ function msms_stylist_name($con, $stylistId)
 
 function msms_has_table($con, $tableName)
 {
-    $t = db_real_escape_string($tableName);
-    $q = db_query("SELECT * FROM information_schema.tables WHERE table_name='$t' LIMIT 1");
-    return ($q && db_num_rows($q) > 0);
+    // Supabase REST does not expose information_schema; hardcode known tables
+    $knownTables = [
+        'tbladmin', 'tblappointment', 'tblcustomers', 'tblinvoice',
+        'tblpage', 'tblservices', 'tblstylists', 'tblstylist_services',
+        'tblsubscribers'
+    ];
+    return in_array(strtolower($tableName), $knownTables);
 }
 
 function msms_has_column($con, $table, $column)
 {
-    $table = db_real_escape_string($table);
-    $column = db_real_escape_string($column);
-    $q = db_query("SELECT * FROM information_schema.columns WHERE table_name='$table' AND column_name='$column' LIMIT 1");
-    return ($q && db_num_rows($q) > 0);
+    // Supabase REST does not expose information_schema; hardcode known columns
+    $schema = [
+        'tblappointment' => ['id','aptnumber','name','email','phonenumber','aptdate','apttime','services','applydate','remark','status','remarkdate','stylistid','stylistremark','styliststatus'],
+        'tblcustomers' => ['id','name','email','mobilenumber','gender','details','creationdate','updationdate','username','password'],
+        'tblstylists' => ['id','stylistname','specialty','mobilenumber','email','username','password','creationdate'],
+        'tblservices' => ['id','servicename','description','cost','creationdate','updationdate'],
+    ];
+    $tbl = strtolower($table);
+    $col = strtolower($column);
+    if (isset($schema[$tbl])) {
+        return in_array($col, $schema[$tbl]);
+    }
+    return false;
 }
 
 function msms_stylists_for_service($con, $serviceName)

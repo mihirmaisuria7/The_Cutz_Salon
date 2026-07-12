@@ -344,15 +344,22 @@ function parse_where_clause($whereClause) {
     $segments = preg_split('/\s+(AND|OR)\s+/i', $whereClause, -1, PREG_SPLIT_DELIM_CAPTURE);
 
     $parts = [];
+    $nextType = 'and';
     for ($i = 0; $i < count($segments); $i++) {
         $segment = trim($segments[$i]);
         if ($segment === '') {
             continue;
         }
-        if (strtoupper($segment) === 'AND' || strtoupper($segment) === 'OR') {
+        if (strtoupper($segment) === 'AND') {
+            $nextType = 'and';
             continue;
         }
-        $parts[] = ['type' => 'and', 'condition' => $segment];
+        if (strtoupper($segment) === 'OR') {
+            $nextType = 'or';
+            continue;
+        }
+        $parts[] = ['type' => $nextType, 'condition' => $segment];
+        $nextType = 'and';
     }
     return $parts;
 }
@@ -369,11 +376,15 @@ function apply_where_conditions($rows, $whereClause) {
 
     $filtered = [];
     foreach ($rows as $row) {
-        $matched = true;
-        foreach ($conditions as $cond) {
-            if (!match_where_condition($row, $cond['condition'])) {
-                $matched = false;
-                break;
+        // Group conditions: first condition starts a group, OR starts alternative
+        $matched = match_where_condition($row, $conditions[0]['condition']);
+        for ($i = 1; $i < count($conditions); $i++) {
+            $cond = $conditions[$i];
+            $thisMatch = match_where_condition($row, $cond['condition']);
+            if ($cond['type'] === 'or') {
+                $matched = $matched || $thisMatch;
+            } else {
+                $matched = $matched && $thisMatch;
             }
         }
         if ($matched) {
@@ -806,8 +817,8 @@ function supabase_query($sql) {
         }
     }
 
-    // Standard SELECT query routing
-    if (preg_match('/^SELECT\s+(DISTINCT\s+)?(.+?)\s+FROM\s+([A-Za-z0-9_.]+)(.*)$/i', $sql, $m)) {
+    // Standard SELECT query routing (\s* before FROM to handle "*from" with no space)
+    if (preg_match('/^SELECT\s+(DISTINCT\s+)?(.+?)\s*FROM\s+([A-Za-z0-9_.]+)(.*)$/i', $sql, $m)) {
         $columns = preg_replace('/\s+/', ' ', trim($m[2]));
         $tableParts = explode('.', $m[3]);
         $table = end($tableParts);
