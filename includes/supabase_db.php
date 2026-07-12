@@ -586,6 +586,61 @@ function handle_join_invoices_customers_list($sql) {
     return new SupabaseResult($results);
 }
 
+function handle_join_dashboard_sales($sql) {
+    $invRes = supabase_select('tblinvoice', ['*']);
+    if (!$invRes->success || empty($invRes->rows)) {
+        return new SupabaseResult([]);
+    }
+
+    $srvRes = supabase_select('tblservices', ['*']);
+    $services = [];
+    if ($srvRes->success) {
+        foreach ($srvRes->rows as $s) {
+            $services[$s['id']] = $s;
+        }
+    }
+
+    // Determine date filter
+    $today = date('Y-m-d');
+    $yesterday = date('Y-m-d', strtotime('-1 day'));
+    $sevenDaysAgo = date('Y-m-d', strtotime('-7 days'));
+
+    $filter = 'none';
+    if (stripos($sql, 'CURDATE()-1') !== false || stripos($sql, 'CURDATE() - 1') !== false) {
+        $filter = 'yesterday';
+    } elseif (stripos($sql, 'CURDATE()') !== false) {
+        $filter = 'today';
+    } elseif (stripos($sql, 'INTERVAL 7 DAY') !== false) {
+        $filter = '7days';
+    }
+
+    $results = [];
+    foreach ($invRes->rows as $inv) {
+        $postDate = substr($inv['postingdate'], 0, 10);
+
+        if ($filter === 'yesterday' && $postDate !== $yesterday) {
+            continue;
+        }
+        if ($filter === 'today' && $postDate !== $today) {
+            continue;
+        }
+        if ($filter === '7days' && $postDate < $sevenDaysAgo) {
+            continue;
+        }
+
+        $serviceId = $inv['serviceid'];
+        $cost = isset($services[$serviceId]) ? $services[$serviceId]['cost'] : 0;
+
+        $results[] = [
+            'ServiceId' => $serviceId,
+            'Cost' => $cost,
+            'id' => $inv['id']
+        ];
+    }
+
+    return new SupabaseResult($results);
+}
+
 function handle_join_sales_reports($sql) {
     $fdate = null;
     $tdate = null;
@@ -735,6 +790,8 @@ function supabase_query($sql) {
         if (stripos($sql, 'tblinvoice') !== false && stripos($sql, 'tblservices') !== false) {
             if (stripos($sql, 'sum(Cost)') !== false || stripos($sql, 'totalprice') !== false) {
                 return handle_join_sales_reports($sql);
+            } elseif (stripos($sql, 'BillingId') === false && stripos($sql, 'Userid') === false) {
+                return handle_join_dashboard_sales($sql);
             } else {
                 return handle_join_invoice_services($sql);
             }
