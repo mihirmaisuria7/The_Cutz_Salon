@@ -827,10 +827,14 @@ function supabase_query($sql) {
             $limit = (int) $limitMatch[1];
         }
 
-        $result = supabase_select($table, $columns === '*' ? ['*'] : array_map('trim', explode(',', $columns)), [], $orderBy, $limit);
+        $selectLimit = ($whereClause !== '') ? null : $limit;
+        $result = supabase_select($table, $columns === '*' ? ['*'] : array_map('trim', explode(',', $columns)), [], $orderBy, $selectLimit);
         $rows = $result->rows;
         if ($whereClause !== '') {
             $rows = apply_where_conditions($rows, $whereClause);
+            if ($limit !== null) {
+                $rows = array_slice($rows, 0, $limit);
+            }
         }
         return new SupabaseResult($rows);
     }
