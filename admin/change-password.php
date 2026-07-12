@@ -1,6 +1,6 @@
-﻿<?php
+<?php
 session_start();
-include('includes/supabase_db.php');
+include('includes/dbconnection.php');
 error_reporting(0);
 include_once('includes/auth_check.php');
 if(isset($_POST['submit']))

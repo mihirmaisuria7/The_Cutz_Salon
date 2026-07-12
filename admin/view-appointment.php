@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 session_start();
 error_reporting(0);
-include('includes/supabase_db.php');
+include('includes/dbconnection.php');
 include_once('includes/auth_check.php');
 require_once __DIR__ . '/../includes/appointment_helpers.php';
 if(isset($_POST['submit']))
@@ -155,7 +155,7 @@ if($row['Status']=="2")
      ;?></td>
   </tr>
 <?php
-$assignedName = 'â€”';
+$assignedName = '—';
 if (!empty($row['StylistId'])) {
     $sid = intval($row['StylistId']);
     $stRow = db_fetch_array(db_query( "SELECT StylistName FROM tblstylists WHERE ID='$sid'"));
@@ -168,7 +168,7 @@ if (!empty($row['StylistId'])) {
   </tr>
   <tr>
     <th>Stylist response</th>
-    <td><?php echo !empty($row['StylistId']) ? msms_apt_stylist_status_text($row['StylistStatus'] ?? '') : 'â€”'; ?></td>
+    <td><?php echo !empty($row['StylistId']) ? msms_apt_stylist_status_text($row['StylistStatus'] ?? '') : '—'; ?></td>
   </tr>
   <tr>
     <th>Overall booking</th>
@@ -186,7 +186,7 @@ if (!empty($row['StylistId'])) {
 						<p class="text-muted small">Client already chose a stylist when booking. Override only if needed.</p>
 						<form method="post">
 						<select name="stylist_id" class="form-control wd-450" style="max-width:320px;display:inline-block;">
-						<option value="0">â€” None â€”</option>
+						<option value="0">— None —</option>
 <?php
 $stylists = db_query( "SELECT ID, StylistName FROM tblstylists ORDER BY StylistName");
 while ($st = db_fetch_array($stylists)) {

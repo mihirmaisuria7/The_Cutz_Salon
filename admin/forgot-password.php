@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 session_start();
 error_reporting(0);
-include('includes/supabase_db.php');
+include('includes/dbconnection.php');
 
 if(isset($_POST['submit']))
   {

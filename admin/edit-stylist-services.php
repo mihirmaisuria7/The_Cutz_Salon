@@ -1,7 +1,7 @@
 <?php
 session_start();
 error_reporting(0);
-include('includes/supabase_db.php');
+include('includes/dbconnection.php');
 include_once('includes/auth_check.php');
 require_once __DIR__ . '/../includes/appointment_helpers.php';
 

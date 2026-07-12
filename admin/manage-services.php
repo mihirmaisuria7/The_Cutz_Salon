@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 session_start();
 error_reporting(0);
-include('includes/supabase_db.php');
+include('includes/dbconnection.php');
 include_once('includes/auth_check.php');
 // Code for deletion
 if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])) {
