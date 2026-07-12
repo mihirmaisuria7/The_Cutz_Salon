@@ -1,4 +1,5 @@
 <?php
+// Trigger redeployment to reload environment variables in Railway
 session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
