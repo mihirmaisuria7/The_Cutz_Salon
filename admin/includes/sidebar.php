@@ -1,12 +1,10 @@
   
 <style type="text/css">
   #leftCol {
-    position: fixed;
-    width: 309px;
-    overflow-y: scroll;
-    top: 0;
-    bottom: 0;
-}
+    width: 100%;
+    overflow-y: auto;
+    height: 100%;
+  }
 </style>
 
   <div class=" sidebar" role="navigation">

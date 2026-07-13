@@ -126,3 +126,74 @@ p[style*="color:red"] {
         margin-left: auto;
     }
 }
+
+/* Custom Responsive Overrides */
+@media (max-width: 768px) {
+  /* Fix widgets squishing on mobile/tablet */
+  .widget {
+    float: none !important;
+    width: 100% !important;
+    margin-bottom: 1.5em;
+  }
+  .widget.states-mdl {
+    margin: 1.5em 0 !important;
+  }
+
+  /* Make tables responsive so they don't overflow the screen */
+  .table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Fix page-wrapper padding and margin */
+  #page-wrapper {
+    padding: 6em 1em 1.5em !important;
+  }
+
+  /* Fix form layouts and row sizing */
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  /* Make sure header elements don't overflow */
+  .header-left {
+    width: 100% !important;
+    float: none !important;
+    text-align: center;
+  }
+  
+  .header-left button#showLeftPush {
+    float: left;
+  }
+  
+  .header-left .logo {
+    display: inline-block;
+    float: none !important;
+  }
+  
+  .header-right {
+    width: 100% !important;
+    float: none !important;
+    margin-top: 10px;
+    padding: 5px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0,0,0,0.1);
+  }
+  
+  .profile_details_left {
+    float: none !important;
+  }
+  
+  .profile_details {
+    float: none !important;
+  }
+  
+  .sticky-header {
+    position: absolute !important;
+  }
+}
+
